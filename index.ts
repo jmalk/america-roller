@@ -117,5 +117,8 @@ function roll() {
     color: colors[randomInRange(0, colors.length - 1)]
   };
   render(randomRound, randomThrow, firstDie, secondDie);
+}
 
+function reset() {
+  console.log("reset the game state");
 }
