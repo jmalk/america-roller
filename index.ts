@@ -51,7 +51,6 @@ function generateRound(): Dice[] {
 }
 
 function generateGame() {
-  // TODO Don't need the last dice of each round really.
   return [
     generateRound(),
     generateRound(),
@@ -62,6 +61,47 @@ function generateGame() {
     generateRound(),
     generateRound(),
   ];
+}
+
+let gameState = {
+  currentRound: 1,
+  currentTurn: 0,
+  diceRolls: generateGame(),
+};
+
+function newTurn() {
+  gameState.currentTurn += 1;
+
+  // Three turns per round
+  if (gameState.currentTurn === 4) {
+    gameState.currentTurn = 1;
+    gameState.currentRound += 1;
+  }
+
+  // `currentRound - 1` because the array of rounds is zero-indexed but we
+  // want the round number to be sensible to humans.
+  const diceForRound = gameState.diceRolls[gameState.currentRound - 1];
+  const diceForTurn =
+    gameState.currentTurn === 1
+      ? [diceForRound[0], diceForRound[1]]
+      : gameState.currentTurn === 2
+      ? [diceForRound[2], diceForRound[3]]
+      : gameState.currentTurn === 3
+      ? [diceForRound[4], diceForRound[5]]
+      : null;
+
+  if (diceForTurn.length === 2) {
+    render(
+      gameState.currentRound,
+      gameState.currentTurn,
+      diceForTurn[0],
+      diceForTurn[1]
+    );
+  } else {
+    throw new Error(
+      `Did not find two dice for this turn. Round ${gameState.currentRound}, Turn ${gameState.currentTurn}, diceForTurn ${diceForTurn}`
+    );
+  }
 }
 
 function render(round: number, turn: number, firstDie: Dice, secondDie: Dice) {}
