@@ -70,5 +70,4 @@ function generateGame() {
   ];
 }
 
-document.body.innerHTML = "" + JSON.stringify(generateGame(), null, 2);
-console.log(generateGame());
+function render(round, turn, firstDie, secondDie) {}
