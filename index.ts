@@ -9,13 +9,6 @@ type DiceColor =
 
 type Dice = { number: number; color: DiceColor };
 
-function dice(color: DiceColor, number: number): Dice {
-  return {
-    color,
-    number,
-  };
-}
-
 // TODO How to make number => DiceNumber in types?
 function rollDie(): number {
   const number = Math.random() * 6;
