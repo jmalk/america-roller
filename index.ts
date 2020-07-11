@@ -132,34 +132,7 @@ function render(round: number, turn: number, firstDie: Dice, secondDie: Dice) {
 }
 
 function roll() {
-  // do something that gets you an updated round, turn, firstdie and seconddie
-  // pass those to render()
-
-  function randomInRange(lowerBound, upperBound) {
-    return lowerBound + Math.round(Math.random() * (upperBound - lowerBound));
-  }
-
-  const colors: DiceColor[] = [
-    "red",
-    "orange",
-    "yellow",
-    "green",
-    "blue",
-    "purple",
-    "colorless",
-  ];
-  let randomRound = randomInRange(1, 8);
-  let randomThrow = randomInRange(1, 3);
-  let randThrow = Math.ceil(Math.random() * 3);
-  let firstDie: Dice = {
-    number: randomInRange(1, 6),
-    color: colors[randomInRange(0, colors.length - 1)],
-  };
-  let secondDie: Dice = {
-    number: randomInRange(1, 6),
-    color: colors[randomInRange(0, colors.length - 1)],
-  };
-  render(randomRound, randomThrow, firstDie, secondDie);
+  newTurn();
 }
 
 function reset() {
