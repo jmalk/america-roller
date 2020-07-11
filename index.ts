@@ -9,27 +9,11 @@ type DiceColor =
 
 type Dice = { number: number; color: DiceColor };
 
-type DiceBag = Dice[];
-
 function dice(color: DiceColor, number: number): Dice {
   return {
     color,
     number,
   };
-}
-
-function diceBag(): DiceBag {
-  // Could write a helper function to put the dice in the bag in a random order?
-  const bag = [
-    dice("red", 6),
-    dice("orange", 6),
-    dice("yellow", 6),
-    dice("green", 6),
-    dice("blue", 6),
-    dice("purple", 6),
-    dice("colorless", 6),
-  ];
-  return bag;
 }
 
 // TODO How to make number => DiceNumber in types?
@@ -39,21 +23,40 @@ function rollDie(): number {
   return result;
 }
 
-function generateRound(): DiceBag {
-  // One dice of each color
-  const bag = diceBag();
+function randomIndex(arrayLength) {
+  return Math.floor(Math.random() * arrayLength);
+}
 
-  // Randomise the order of the colors
-  // TODO: The important bit!!!
+function generateRound(): Dice[] {
+  let allColors: DiceColor[] = [
+    "red",
+    "orange",
+    "yellow",
+    "green",
+    "blue",
+    "purple",
+    "colorless",
+  ];
 
-  // Randomise the numbers on all the dice
-  const rolledBag = bag.map(({ color }) => {
+  let totalColors = allColors.length;
+
+  let colorOrder = [];
+
+  // Use `totalColors - 1` because one die is always left in the bag
+  for (let i = 0; i < totalColors - 1; i++) {
+    const random = randomIndex(allColors.length);
+    const picked = allColors.splice(random, 1);
+    colorOrder = colorOrder.concat(picked);
+  }
+
+  const diceForRound = colorOrder.map((color) => {
     return {
       color,
       number: rollDie(),
     };
   });
-  return rolledBag;
+
+  return diceForRound;
 }
 
 function generateGame() {
@@ -70,4 +73,4 @@ function generateGame() {
   ];
 }
 
-function render(round, turn, firstDie, secondDie) {}
+function render(round: number, turn: number, firstDie: Dice, secondDie: Dice) {}
