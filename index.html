@@ -1,3 +1,30 @@
+<head>
+  <link href='https://fonts.googleapis.com/css?family=Alfa Slab One' rel='stylesheet'>
+  <link rel="stylesheet" href="main.css">
+</head>
 <body>
   <script src="index.js"></script>
+  <center>
+    <div><h1>AmericaRoller</h2></div>
+
+    <div id="main-wrapper">
+      <div id="round-tracker-div" class="tracker-div">
+        <p class="tracker-type">ROUND</p>
+        <p id="round-tracker-value" class="tracker-value"></p>
+      </div>
+
+      <div id="die1-div" class="die-div"></div>
+      <div id="die2-div" class="die-div"></div>
+
+      <div id="round-tracker-div" class="tracker-div">
+        <p class="tracker-type">ROLL</p>
+        <p id="roll-tracker-value" class="tracker-value"></p>
+      </div>
+    </div>
+
+    <button id="roll-button" onclick="roll()">ROLL</button><br>
+    <button id="reset-button">RESET</button>
+    
+    <p id="game-over"></p>
+  </center>
 </body>
