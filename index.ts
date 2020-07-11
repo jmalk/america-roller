@@ -104,4 +104,64 @@ function newTurn() {
   }
 }
 
-function render(round: number, turn: number, firstDie: Dice, secondDie: Dice) {}
+function showDie(parentDivId, die: Dice) {
+  let dieImg = document.createElement("img");
+  dieImg.className = "die-image";
+  dieImg.src =
+    "assets/dice/" + die.color + "-" + die.number.toString() + ".png";
+  let parentDiv = document.getElementById(parentDivId);
+  if (parentDiv.hasChildNodes()) {
+    parentDiv.replaceChild(dieImg, parentDiv.firstChild);
+  } else {
+    parentDiv.appendChild(dieImg);
+  }
+}
+
+function render(round: number, turn: number, firstDie: Dice, secondDie: Dice) {
+  document.getElementById("game-over").innerHTML = "";
+
+  document.getElementById("round-tracker-value").innerHTML = round.toString();
+  document.getElementById("roll-tracker-value").innerHTML = turn.toString();
+
+  showDie("die1-div", firstDie);
+  showDie("die2-div", secondDie);
+
+  if (round == 8 && turn == 3) {
+    document.getElementById("game-over").innerHTML = "GAME OVER";
+  }
+}
+
+function roll() {
+  // do something that gets you an updated round, turn, firstdie and seconddie
+  // pass those to render()
+
+  function randomInRange(lowerBound, upperBound) {
+    return lowerBound + Math.round(Math.random() * (upperBound - lowerBound));
+  }
+
+  const colors: DiceColor[] = [
+    "red",
+    "orange",
+    "yellow",
+    "green",
+    "blue",
+    "purple",
+    "colorless",
+  ];
+  let randomRound = randomInRange(1, 8);
+  let randomThrow = randomInRange(1, 3);
+  let randThrow = Math.ceil(Math.random() * 3);
+  let firstDie: Dice = {
+    number: randomInRange(1, 6),
+    color: colors[randomInRange(0, colors.length - 1)],
+  };
+  let secondDie: Dice = {
+    number: randomInRange(1, 6),
+    color: colors[randomInRange(0, colors.length - 1)],
+  };
+  render(randomRound, randomThrow, firstDie, secondDie);
+}
+
+function reset() {
+  console.log("reset the game state");
+}
