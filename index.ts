@@ -1,3 +1,6 @@
+const NUM_ROUNDS = 8;
+const NUM_TURNS = 3;
+
 type DiceColor =
   | "red"
   | "orange"
@@ -50,61 +53,12 @@ function generateRound(): Dice[] {
   return diceForRound;
 }
 
-function generateGame() {
-  return [
-    generateRound(),
-    generateRound(),
-    generateRound(),
-    generateRound(),
-    generateRound(),
-    generateRound(),
-    generateRound(),
-    generateRound(),
-  ];
-}
-
-function newGameState() {
-  return {
-    currentRound: 1,
-    currentTurn: 0,
-    diceRolls: generateGame(),
-  };
-}
-
-let gameState = newGameState();
-
-function isGameOver(gameStateObject) {
-  return gameStateObject.currentRound === 8 && gameStateObject.currentTurn === 3;
-}
-
-function newTurn() {
-  gameState.currentTurn += 1;
-
-  // Three turns per round
-  if (gameState.currentTurn === 4) {
-    gameState.currentTurn = 1;
-    gameState.currentRound += 1;
+function generateGameDice() {
+  let dice = [];
+  for (var i = 0; i < NUM_ROUNDS; i++) {
+    dice.push(generateRound());
   }
-
-  // `currentRound - 1` because the array of rounds is zero-indexed but we
-  // want the round number to be sensible to humans.
-  const diceForRound = gameState.diceRolls[gameState.currentRound - 1];
-  const diceForTurn =
-    gameState.currentTurn === 1
-      ? [diceForRound[0], diceForRound[1]]
-      : gameState.currentTurn === 2
-      ? [diceForRound[2], diceForRound[3]]
-      : gameState.currentTurn === 3
-      ? [diceForRound[4], diceForRound[5]]
-      : null;
-
-  if (diceForTurn.length === 2) {
-    render(gameState);
-  } else {
-    throw new Error(
-      `Did not find two dice for this turn. Round ${gameState.currentRound}, Turn ${gameState.currentTurn}, diceForTurn ${diceForTurn}`
-    );
-  }
+  return dice;
 }
 
 function clearDie(parentDivId) {
@@ -126,40 +80,69 @@ function showDie(parentDivId, die: Dice) {
   }
 }
 
-function render(gameStateObject) {
-  document.getElementById("game-over").innerHTML = "";
+class GameState {
+  round = 1;
+  turn = 0;
+  diceRolls = generateGameDice();
 
-  let round = gameStateObject.currentRound;
-  let turn = gameStateObject.currentTurn;
-  let roundDice = gameStateObject.diceRolls[round - 1];
-
-  if (round === 1 && turn === 0) {
-    document.getElementById("round-tracker-value").innerHTML = "";
-    document.getElementById("roll-tracker-value").innerHTML = "";
-
-    clearDie("die1-div");
-    clearDie("die2-div");
-  } else {
-    document.getElementById("round-tracker-value").innerHTML = round.toString();
-    document.getElementById("roll-tracker-value").innerHTML = turn.toString();
-
-    showDie("die1-div", roundDice[turn*2 - 2]);
-    showDie("die2-div", roundDice[turn*2 - 1]);
+  isNewGame() {
+    return this.round === 1 && this.turn === 0;
   }
 
-  if (round == 8 && turn == 3) {
-    document.getElementById("game-over").innerHTML = "GAME OVER";
+  isGameOver() {
+    return this.round === NUM_ROUNDS && this.turn === NUM_TURNS;
+  } 
+
+  currentDice() {
+    let roundDice = this.diceRolls[this.round - 1];
+    return roundDice.slice(this.turn*2 - 2, this.turn*2);
+  }
+
+  newTurn() {
+    this.turn += 1;
+
+    // Three turns per round
+    if (this.turn === NUM_TURNS + 1) {
+      this.turn = 1;
+      this.round += 1;
+    }
+
+    this.render();
+  }
+
+  render() {
+    document.getElementById("game-over").innerHTML = "";
+  
+    if (this.isNewGame()) {
+      document.getElementById("round-tracker-value").innerHTML = "";
+      document.getElementById("roll-tracker-value").innerHTML = "";
+  
+      clearDie("die1-div");
+      clearDie("die2-div");
+    } else {
+      document.getElementById("round-tracker-value").innerHTML = this.round.toString();
+      document.getElementById("roll-tracker-value").innerHTML = this.turn.toString();
+  
+      showDie("die1-div", this.currentDice()[0]);
+      showDie("die2-div", this.currentDice()[1]);
+    }
+  
+    if (this.isGameOver()) {
+      document.getElementById("game-over").innerHTML = "GAME OVER";
+    }
   }
 }
 
+let gameState = new GameState();
+
 function roll() {
-  if (isGameOver(gameState)) {
+  if (gameState.isGameOver()) {
     reset();
   }
-  newTurn();
+  gameState.newTurn();
 }
 
 function reset() {
-  gameState = newGameState();
-  render(gameState);
+  gameState = new GameState();
+  gameState.render();
 }
