@@ -67,11 +67,22 @@ function clearDie(parentDivId) {
   parent.removeChild(oldChild);
 }
 
+let dieSelection = null;
+function toggleDieSelection(die: Dice) {
+  if (dieSelection === null) {
+    console.log("New die selected: " + die.number.toString());
+    dieSelection = die;
+  } else {
+    console.log("Die unselected");
+    dieSelection = null;
+  }
+}
+
 function showDie(parentDivId, die: Dice) {
   let dieImg = document.createElement("img");
   dieImg.className = "die-image";
-  dieImg.src =
-    "assets/dice/" + die.color + "-" + die.number.toString() + ".png";
+  dieImg.src = "assets/dice/" + die.color + "-" + die.number.toString() + ".png";
+  dieImg.addEventListener("click", function() { toggleDieSelection(die) });
   let parentDiv = document.getElementById(parentDivId);
   if (parentDiv.hasChildNodes()) {
     parentDiv.replaceChild(dieImg, parentDiv.firstChild);
