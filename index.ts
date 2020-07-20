@@ -114,14 +114,14 @@ class GameState {
     document.getElementById("game-over").innerHTML = "";
   
     if (this.isNewGame()) {
-      document.getElementById("round-tracker-value").innerHTML = "";
-      document.getElementById("roll-tracker-value").innerHTML = "";
+      document.getElementById("round-tracker").innerHTML = "ROUND: ";
+      document.getElementById("roll-tracker").innerHTML = "ROLL: ";
   
       clearDie("die1-div");
       clearDie("die2-div");
     } else {
-      document.getElementById("round-tracker-value").innerHTML = this.round.toString();
-      document.getElementById("roll-tracker-value").innerHTML = this.turn.toString();
+      document.getElementById("round-tracker").innerHTML = "ROUND: " + this.round.toString();
+      document.getElementById("roll-tracker").innerHTML = "ROLL: " + this.turn.toString();
   
       showDie("die1-div", this.currentDice()[0]);
       showDie("die2-div", this.currentDice()[1]);

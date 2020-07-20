@@ -2,42 +2,84 @@ body {
     font-family: "Alfa Slab One"
 }
 
-#main-wrapper {
+#title-text {
+    margin-top: 10px;
+    font-size: 40pt;
+}
+
+#header-wrapper {
     display: inline-block;
-    background-image: url("assets/us_flag.jpg");
     height: auto;
     width: auto;
 }
 
-.tracker-type {
-    font-size: 26pt;
+#header-title {
+    float: left;
+    height: 100px;
+    width: 500px;
 }
 
-.tracker-value {
-    margin-top: -20px;
-    font-size: 64pt;
+#header-buttons {
+    float: right;
+    height: 100px;
+    width: 500px;
+}
+
+#main-wrapper {
+    display: inline-block;
+    height: auto;
+    width: auto;
+}
+
+#trackers {
+    float: left;
+    background-image: url("assets/us_flag.jpg");
+    height: 300px;
+    width: 500px;
+    margin-right: 50px;
+}
+
+.tracker-div {
+    background-color: #F0F0F0;
+    width: 200px;
+    height: 80px;
+    margin: 20px;
+    float: left;
+}
+
+.tracker {
+    font-size: 20pt;
+}
+
+#round-tracker-div {
+    margin-left: 25px;
+}
+
+#dice {
+    float: left;
+    margin-left: 30px;
+    margin-top: -25px;
 }
 
 .die-div {
     background-color: #A3A3A3;
-    width: 300px;
-    height: 300px;
+    width: 160px;
+    height: 160px;
     margin: 30px;
     float: left;
 }
 
 .die-image {
-    margin: 20px;
-    height: 260px;
-    width: 260px;
+    margin: 10px;
+    height: 140px;
+    width: 140px;
 }
 
-.tracker-div {
-    background-color: #F0F0F0;
-    width: 250px;
-    height: 250px;
-    margin: 50px;
-    float: left;
+#map {
+    float: right;
+    height: 70%;
+    width: 800px;
+    background-color: green;
 }
 
 button {
@@ -45,21 +87,19 @@ button {
     height: 50px;
     width: 130px;
     border-radius: 10px;
-    font-family: "Alfa Slab One"
+    font-family: "Alfa Slab One";
+    font-size: 16pt;
+    margin-top: 25px;
   }
 
 #roll-button {
-    margin-top: 30px;
+    margin-left: -20px;
+    margin-right: 20px;
     background-color: red;
-    height: 60px;
-    width: 150px;
-    font-size: 26pt;
-  }
+}
 
 #reset-button {
-    margin-top: 20px;
     background-color: blue;
-    font-size: 16pt;
 }
 
 #game-over {
