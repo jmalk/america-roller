@@ -101,3 +101,8 @@ button {
     width: 800px;
     background-color: green;
 }
+
+#map-img {
+    height: 573px;
+    width: 800px;
+}

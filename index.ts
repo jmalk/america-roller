@@ -146,3 +146,7 @@ function reset() {
   gameState = new GameState();
   gameState.render();
 }
+
+function chooseState(e) {
+  console.log(e);
+}
