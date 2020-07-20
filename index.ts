@@ -63,11 +63,19 @@ function generateGame() {
   ];
 }
 
-let gameState = {
-  currentRound: 1,
-  currentTurn: 0,
-  diceRolls: generateGame(),
-};
+function newGameState() {
+  return {
+    currentRound: 1,
+    currentTurn: 0,
+    diceRolls: generateGame(),
+  };
+}
+
+let gameState = newGameState();
+
+function isGameOver(gameStateObject) {
+  return gameStateObject.currentRound === 8 && gameStateObject.currentTurn === 3;
+}
 
 function newTurn() {
   gameState.currentTurn += 1;
@@ -91,17 +99,18 @@ function newTurn() {
       : null;
 
   if (diceForTurn.length === 2) {
-    render(
-      gameState.currentRound,
-      gameState.currentTurn,
-      diceForTurn[0],
-      diceForTurn[1]
-    );
+    render(gameState);
   } else {
     throw new Error(
       `Did not find two dice for this turn. Round ${gameState.currentRound}, Turn ${gameState.currentTurn}, diceForTurn ${diceForTurn}`
     );
   }
+}
+
+function clearDie(parentDivId) {
+  let parent = document.getElementById(parentDivId);
+  let oldChild = parent.childNodes[0];
+  parent.removeChild(oldChild);
 }
 
 function showDie(parentDivId, die: Dice) {
@@ -117,14 +126,26 @@ function showDie(parentDivId, die: Dice) {
   }
 }
 
-function render(round: number, turn: number, firstDie: Dice, secondDie: Dice) {
+function render(gameStateObject) {
   document.getElementById("game-over").innerHTML = "";
 
-  document.getElementById("round-tracker-value").innerHTML = round.toString();
-  document.getElementById("roll-tracker-value").innerHTML = turn.toString();
+  let round = gameStateObject.currentRound;
+  let turn = gameStateObject.currentTurn;
+  let roundDice = gameStateObject.diceRolls[round - 1];
 
-  showDie("die1-div", firstDie);
-  showDie("die2-div", secondDie);
+  if (round === 1 && turn === 0) {
+    document.getElementById("round-tracker-value").innerHTML = "";
+    document.getElementById("roll-tracker-value").innerHTML = "";
+
+    clearDie("die1-div");
+    clearDie("die2-div");
+  } else {
+    document.getElementById("round-tracker-value").innerHTML = round.toString();
+    document.getElementById("roll-tracker-value").innerHTML = turn.toString();
+
+    showDie("die1-div", roundDice[turn*2 - 2]);
+    showDie("die2-div", roundDice[turn*2 - 1]);
+  }
 
   if (round == 8 && turn == 3) {
     document.getElementById("game-over").innerHTML = "GAME OVER";
@@ -132,9 +153,13 @@ function render(round: number, turn: number, firstDie: Dice, secondDie: Dice) {
 }
 
 function roll() {
+  if (isGameOver(gameState)) {
+    reset();
+  }
   newTurn();
 }
 
 function reset() {
-  console.log("reset the game state");
+  gameState = newGameState();
+  render(gameState);
 }
