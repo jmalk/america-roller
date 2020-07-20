@@ -7,28 +7,11 @@ body {
     font-size: 40pt;
 }
 
-#header-wrapper {
-    display: inline-block;
-    height: auto;
-    width: auto;
-}
-
-#header-title {
-    float: left;
-    height: 100px;
-    width: 500px;
-}
-
-#header-buttons {
-    float: right;
-    height: 100px;
-    width: 500px;
-}
-
 #main-wrapper {
     display: inline-block;
     height: auto;
     width: auto;
+    margin-top: -20px;
 }
 
 #left-panel {
@@ -81,28 +64,20 @@ body {
     width: 140px;
 }
 
-#helpers {
-    background-color: burlywood;
+#buttons {
     width: 500px;
     height: 100px;
-    margin-top: 30px;
-}
-
-#map {
-    float: right;
-    height: 430px;
-    width: 800px;
-    background-color: green;
+    margin-top: 10px;
 }
 
 button {
     color: white;
-    height: 50px;
-    width: 130px;
+    height: 70px;
+    width: 160px;
     border-radius: 10px;
     font-family: "Alfa Slab One";
-    font-size: 16pt;
-    margin-top: 25px;
+    font-size: 22pt;
+    margin-top: 20px;
   }
 
 #roll-button {
@@ -118,4 +93,11 @@ button {
 #game-over {
     color: red;
     font-size: 26pt;
+}
+
+#map {
+    float: right;
+    height: 573px;
+    width: 800px;
+    background-color: green;
 }
