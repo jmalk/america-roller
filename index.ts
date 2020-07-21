@@ -67,22 +67,53 @@ function clearDie(parentDivId) {
   parent.removeChild(oldChild);
 }
 
-let dieSelection = null;
-function toggleDieSelection(die: Dice) {
-  if (dieSelection === null) {
-    console.log("New die selected: " + die.number.toString());
-    dieSelection = die;
-  } else {
-    console.log("Die unselected");
-    dieSelection = null;
-  }
+function changeDieBackground(leftOrRight, highlightColor="#A3A3A3") {
+  let divId = leftOrRight === "left" ? "die1-div" : "die2-div";
+  document.getElementById(divId).style.backgroundColor = highlightColor;
 }
+
+let dieSelection = null;
+let activeDie = null;
+
+function activateDie(leftOrRight: string, targetDie: Dice) {
+  if (dieSelection !== null) {
+    changeDieBackground(dieSelection);
+  }
+  dieSelection = leftOrRight;
+  activeDie = targetDie;
+  changeDieBackground(dieSelection, "red");
+}
+
+function deactivateDie(targetColor: string = "#A3A3A3") {
+  if (dieSelection !== null) {
+    changeDieBackground(dieSelection, targetColor);
+  }
+  dieSelection = null;
+  activeDie = null;
+}
+// function toggleDieSelection(leftOrRight: String, targetDie: Dice) {
+//   if (dieSelection === null) {
+//     dieSelection = leftOrRight;
+//     activeDie = targetDie;
+//     highlightDie(leftOrRight);
+//   } else if (dieSelection !== leftOrRight) {
+//     unhighlightDie(dieSelection);
+//     dieSelection = leftOrRight;
+//     activeDie = targetDie;
+//     highlightDie(leftOrRight);
+//   } else {
+//     dieSelection = null;
+//     activeDie = null;
+//     unhighlightDie(leftOrRight);
+//   }
+// }
 
 function showDie(parentDivId, die: Dice) {
   let dieImg = document.createElement("img");
+  dieImg.id = parentDivId.substring(0,4);
   dieImg.className = "die-image";
   dieImg.src = "assets/dice/" + die.color + "-" + die.number.toString() + ".png";
-  dieImg.addEventListener("click", function() { toggleDieSelection(die) });
+  let leftOrRight = parentDivId === "die1-div" ? "left" : "right"
   let parentDiv = document.getElementById(parentDivId);
   if (parentDiv.hasChildNodes()) {
     parentDiv.replaceChild(dieImg, parentDiv.firstChild);
@@ -110,6 +141,9 @@ class GameState {
   }
 
   newTurn() {
+    changeDieBackground("left");
+    changeDieBackground("right");
+    
     this.turn += 1;
 
     // Three turns per round
@@ -145,6 +179,37 @@ class GameState {
 }
 
 let gameState = new GameState();
+document.body.addEventListener('click', function() {
+  var target = event.target as HTMLElement; 
+  if (dieSelection === null && target.className === "die-image") {
+    // no currently active die so activate one just selected
+    var leftOrRight = target.id === "die1" ? "left" : "right";
+    var targetDie = leftOrRight === "left" ? gameState.currentDice()[0] : gameState.currentDice()[1];
+    activateDie(leftOrRight, targetDie);
+  } else if (dieSelection !== null && target.className === "die-image") {
+    // there is a currently active die but a die has been clicked
+    var targetLeftOrRight = target.id === "die1" ? "left" : "right";
+    if (targetLeftOrRight === dieSelection) {
+      // if it's the same one that's currently active then deactivate it
+      deactivateDie();
+    } else {
+      // if it's the other one then switch which die is active
+      deactivateDie();
+      var targetDie = leftOrRight === "left" ? gameState.currentDice()[0] : gameState.currentDice()[1];
+      activateDie(targetLeftOrRight, targetDie);
+    }
+  } else if (dieSelection !== null && target.className === "state-area") {
+    // assign die to state
+    chooseState(activeDie, target);
+    deactivateDie("green");
+  } else if (dieSelection !== null && target.className === "helper-area") {
+    // activate helper
+    console.log("Helper activated");
+    deactivateDie();
+  } else {
+    deactivateDie();
+  }
+}, true); 
 
 function roll() {
   if (gameState.isGameOver()) {
@@ -158,6 +223,6 @@ function reset() {
   gameState.render();
 }
 
-function chooseState(e) {
-  console.log(e);
+function chooseState(activeDie: Dice, targetState: HTMLElement) {
+  console.log("Putting a " + activeDie.color.toString() + " " + activeDie.number.toString() + " in " + targetState.title.toString());
 }
