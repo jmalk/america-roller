@@ -44,23 +44,20 @@ function generateGameDice() {
   return dice;
 }
 
-let dieSelection = null;
 let activeDie = null;
 
-function activateDie(leftOrRight: string, targetDie: Dice) {
-  if (dieSelection !== null) {
+function activateDie(leftOrRight: string) {
+  if (activeDie !== null) {
     activeDie.setBackground();
   }
-  dieSelection = leftOrRight;
-  activeDie = targetDie;
+  activeDie = gameState.currentDice()[leftOrRight];
   activeDie.setBackground("red");
 }
 
 function deactivateDie(targetColor="#A3A3A3") {
-  if (dieSelection !== null) {
+  if (activeDie !== null) {
     activeDie.setBackground(targetColor);
   }
-  dieSelection = null;
   activeDie = null;
 }
 
@@ -121,28 +118,26 @@ class GameState {
 let gameState = new GameState();
 document.body.addEventListener('click', function() {
   var target = event.target as HTMLElement; 
-  if (dieSelection === null && target.className === "die-image") {
+  if (activeDie === null && target.className === "die-image") {
     // no currently active die so activate one just selected
     var leftOrRight = target.id === "die-left" ? "left" : "right";
-    var targetDie = leftOrRight === "left" ? gameState.currentDice().left : gameState.currentDice().right;
-    activateDie(leftOrRight, targetDie);
-  } else if (dieSelection !== null && target.className === "die-image") {
+    activateDie(leftOrRight);
+  } else if (activeDie !== null && target.className === "die-image") {
     // there is a currently active die but a die has been clicked
-    var targetLeftOrRight = target.id === "die1" ? "left" : "right";
-    if (targetLeftOrRight === dieSelection) {
+    var targetLeftOrRight = target.id === "die-left" ? "left" : "right";
+    if (targetLeftOrRight === activeDie.position) {
       // if it's the same one that's currently active then deactivate it
       deactivateDie();
     } else {
       // if it's the other one then switch which die is active
       deactivateDie();
-      var targetDie = leftOrRight === "left" ? gameState.currentDice().left : gameState.currentDice().right;
-      activateDie(targetLeftOrRight, targetDie);
+      activateDie(targetLeftOrRight);
     }
-  } else if (dieSelection !== null && target.className === "state-area") {
+  } else if (activeDie !== null && target.className === "state-area") {
     // assign die to state
     chooseState(activeDie, target);
     deactivateDie("green");
-  } else if (dieSelection !== null && target.className === "helper-area") {
+  } else if (activeDie !== null && target.className === "helper-area") {
     // activate helper
     console.log("Helper activated");
     deactivateDie();
