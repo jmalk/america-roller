@@ -17,8 +17,6 @@ function rollDie(sides = 6): number {
 export class Dice {
     number: number;
     color: DiceColor;
-    assigned: boolean = false;
-    selected: boolean = false;
     position: DicePosition;
     parentDiv: HTMLElement;
 

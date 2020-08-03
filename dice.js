@@ -4,8 +4,6 @@ function rollDie(sides = 6) {
 }
 export class Dice {
     constructor(color, diceIndex) {
-        this.assigned = false;
-        this.selected = false;
         this.number = rollDie();
         this.color = color;
         this.position = diceIndex % 2 === 0 ? "left" : "right";
