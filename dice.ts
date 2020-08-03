@@ -1,0 +1,44 @@
+export type DiceColor =
+  | "red"
+  | "orange"
+  | "yellow"
+  | "green"
+  | "blue"
+  | "purple"
+  | "colorless";
+
+type DicePosition = "left" | "right";
+
+  // TODO How to make number => DiceNumber in types?
+function rollDie(sides = 6): number {
+    return Math.ceil(Math.random() * sides);
+}
+
+export class Dice {
+    number: number;
+    color: DiceColor;
+    assigned: boolean = false;
+    selected: boolean = false;
+    position: DicePosition;
+    parentDiv: HTMLElement;
+
+    constructor(color: DiceColor, diceIndex: number) {
+        this.number = rollDie();
+        this.color = color;
+        this.position = diceIndex % 2 === 0 ? "left" : "right";
+        let parentDivId = this.position === "left" ? "die1-div" : "die2-div";
+        this.parentDiv = document.getElementById(parentDivId);
+    }
+
+    render() {
+        let dieImg = document.createElement("img");
+        dieImg.id = "die-" + this.position.toString();
+        dieImg.className = "die-image";
+        dieImg.src = "assets/dice/" + this.color + "-" + this.number.toString() + ".png";
+        if (this.parentDiv.hasChildNodes()) {
+          this.parentDiv.replaceChild(dieImg, this.parentDiv.firstChild);
+        } else {
+          this.parentDiv.appendChild(dieImg);
+        }
+      }
+}

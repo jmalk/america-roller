@@ -1,21 +1,7 @@
+import {Dice, DiceColor} from "./dice.js"
+
 const NUM_ROUNDS = 8;
 const NUM_TURNS = 3;
-
-type DiceColor =
-  | "red"
-  | "orange"
-  | "yellow"
-  | "green"
-  | "blue"
-  | "purple"
-  | "colorless";
-
-type Dice = { number: number; color: DiceColor };
-
-// TODO How to make number => DiceNumber in types?
-function rollDie(sides = 6): number {
-  return Math.ceil(Math.random() * sides);
-}
 
 function randomIndex(arrayLength) {
   return Math.floor(Math.random() * arrayLength);
@@ -43,11 +29,8 @@ function generateRound(): Dice[] {
     colorOrder = colorOrder.concat(picked);
   }
 
-  const diceForRound = colorOrder.map((color) => {
-    return {
-      color,
-      number: rollDie(),
-    };
+  const diceForRound = colorOrder.map((color, diceIndex) => {
+    return new Dice(color, diceIndex);
   });
 
   return diceForRound;
@@ -108,20 +91,6 @@ function deactivateDie(targetColor: string = "#A3A3A3") {
 //   }
 // }
 
-function showDie(parentDivId, die: Dice) {
-  let dieImg = document.createElement("img");
-  dieImg.id = parentDivId.substring(0,4);
-  dieImg.className = "die-image";
-  dieImg.src = "assets/dice/" + die.color + "-" + die.number.toString() + ".png";
-  let leftOrRight = parentDivId === "die1-div" ? "left" : "right"
-  let parentDiv = document.getElementById(parentDivId);
-  if (parentDiv.hasChildNodes()) {
-    parentDiv.replaceChild(dieImg, parentDiv.firstChild);
-  } else {
-    parentDiv.appendChild(dieImg);
-  }
-}
-
 class GameState {
   round = 1;
   turn = 0;
@@ -137,7 +106,10 @@ class GameState {
 
   currentDice() {
     let roundDice = this.diceRolls[this.round - 1];
-    return roundDice.slice(this.turn*2 - 2, this.turn*2);
+    return {
+      "left": roundDice[this.turn*2 - 2],
+      "right": roundDice[this.turn*2 - 1]
+    };
   }
 
   newTurn() {
@@ -168,8 +140,8 @@ class GameState {
       document.getElementById("round-tracker").innerHTML = "ROUND: " + this.round.toString();
       document.getElementById("roll-tracker").innerHTML = "ROLL: " + this.turn.toString();
   
-      showDie("die1-div", this.currentDice()[0]);
-      showDie("die2-div", this.currentDice()[1]);
+      this.currentDice().left.render();
+      this.currentDice().right.render();
     }
   
     if (this.isGameOver()) {
@@ -183,8 +155,8 @@ document.body.addEventListener('click', function() {
   var target = event.target as HTMLElement; 
   if (dieSelection === null && target.className === "die-image") {
     // no currently active die so activate one just selected
-    var leftOrRight = target.id === "die1" ? "left" : "right";
-    var targetDie = leftOrRight === "left" ? gameState.currentDice()[0] : gameState.currentDice()[1];
+    var leftOrRight = target.id === "die-left" ? "left" : "right";
+    var targetDie = leftOrRight === "left" ? gameState.currentDice().left : gameState.currentDice().right;
     activateDie(leftOrRight, targetDie);
   } else if (dieSelection !== null && target.className === "die-image") {
     // there is a currently active die but a die has been clicked
@@ -195,7 +167,7 @@ document.body.addEventListener('click', function() {
     } else {
       // if it's the other one then switch which die is active
       deactivateDie();
-      var targetDie = leftOrRight === "left" ? gameState.currentDice()[0] : gameState.currentDice()[1];
+      var targetDie = leftOrRight === "left" ? gameState.currentDice().left : gameState.currentDice().right;
       activateDie(targetLeftOrRight, targetDie);
     }
   } else if (dieSelection !== null && target.className === "state-area") {
@@ -211,14 +183,17 @@ document.body.addEventListener('click', function() {
   }
 }, true); 
 
-function roll() {
+document.getElementById('roll-button').addEventListener('click', function() {roll();});
+document.getElementById('reset-button').addEventListener('click', function() {roll();});
+
+export function roll() {
   if (gameState.isGameOver()) {
     reset();
   }
   gameState.newTurn();
 }
 
-function reset() {
+export function reset() {
   gameState = new GameState();
   gameState.render();
 }
