@@ -30,7 +30,13 @@ export class Dice {
         this.parentDiv = document.getElementById(parentDivId);
     }
 
+    setBackground(targetColor: string = "#A3A3A3") {
+        this.parentDiv.style.backgroundColor = targetColor;
+    }
+
     render() {
+        this.setBackground();
+        
         let dieImg = document.createElement("img");
         dieImg.id = "die-" + this.position.toString();
         dieImg.className = "die-image";

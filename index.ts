@@ -50,46 +50,25 @@ function clearDie(parentDivId) {
   parent.removeChild(oldChild);
 }
 
-function changeDieBackground(leftOrRight, highlightColor="#A3A3A3") {
-  let divId = leftOrRight === "left" ? "die1-div" : "die2-div";
-  document.getElementById(divId).style.backgroundColor = highlightColor;
-}
-
 let dieSelection = null;
 let activeDie = null;
 
 function activateDie(leftOrRight: string, targetDie: Dice) {
   if (dieSelection !== null) {
-    changeDieBackground(dieSelection);
+    activeDie.setBackground();
   }
   dieSelection = leftOrRight;
   activeDie = targetDie;
-  changeDieBackground(dieSelection, "red");
+  activeDie.setBackground("red");
 }
 
-function deactivateDie(targetColor: string = "#A3A3A3") {
+function deactivateDie(targetColor="#A3A3A3") {
   if (dieSelection !== null) {
-    changeDieBackground(dieSelection, targetColor);
+    activeDie.setBackground(targetColor);
   }
   dieSelection = null;
   activeDie = null;
 }
-// function toggleDieSelection(leftOrRight: String, targetDie: Dice) {
-//   if (dieSelection === null) {
-//     dieSelection = leftOrRight;
-//     activeDie = targetDie;
-//     highlightDie(leftOrRight);
-//   } else if (dieSelection !== leftOrRight) {
-//     unhighlightDie(dieSelection);
-//     dieSelection = leftOrRight;
-//     activeDie = targetDie;
-//     highlightDie(leftOrRight);
-//   } else {
-//     dieSelection = null;
-//     activeDie = null;
-//     unhighlightDie(leftOrRight);
-//   }
-// }
 
 class GameState {
   round = 1;
@@ -113,9 +92,6 @@ class GameState {
   }
 
   newTurn() {
-    changeDieBackground("left");
-    changeDieBackground("right");
-    
     this.turn += 1;
 
     // Three turns per round
