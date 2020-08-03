@@ -44,12 +44,6 @@ function generateGameDice() {
   return dice;
 }
 
-function clearDie(parentDivId) {
-  let parent = document.getElementById(parentDivId);
-  let oldChild = parent.childNodes[0];
-  parent.removeChild(oldChild);
-}
-
 let dieSelection = null;
 let activeDie = null;
 
@@ -109,9 +103,7 @@ class GameState {
     if (this.isNewGame()) {
       document.getElementById("round-tracker").innerHTML = "ROUND: ";
       document.getElementById("roll-tracker").innerHTML = "ROLL: ";
-  
-      clearDie("die1-div");
-      clearDie("die2-div");
+
     } else {
       document.getElementById("round-tracker").innerHTML = "ROUND: " + this.round.toString();
       document.getElementById("roll-tracker").innerHTML = "ROLL: " + this.turn.toString();
@@ -160,7 +152,7 @@ document.body.addEventListener('click', function() {
 }, true); 
 
 document.getElementById('roll-button').addEventListener('click', function() {roll();});
-document.getElementById('reset-button').addEventListener('click', function() {roll();});
+document.getElementById('reset-button').addEventListener('click', function() {reset();});
 
 export function roll() {
   if (gameState.isGameOver()) {
@@ -170,6 +162,9 @@ export function roll() {
 }
 
 export function reset() {
+  gameState.currentDice().left.clear();
+  gameState.currentDice().right.clear();
+
   gameState = new GameState();
   gameState.render();
 }

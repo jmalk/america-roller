@@ -36,7 +36,7 @@ export class Dice {
 
     render() {
         this.setBackground();
-        
+
         let dieImg = document.createElement("img");
         dieImg.id = "die-" + this.position.toString();
         dieImg.className = "die-image";
@@ -47,4 +47,9 @@ export class Dice {
           this.parentDiv.appendChild(dieImg);
         }
       }
+
+    clear() {
+        let oldChild = this.parentDiv.childNodes[0];
+        this.parentDiv.removeChild(oldChild);
+    }
 }

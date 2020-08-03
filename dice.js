@@ -28,4 +28,8 @@ export class Dice {
             this.parentDiv.appendChild(dieImg);
         }
     }
+    clear() {
+        let oldChild = this.parentDiv.childNodes[0];
+        this.parentDiv.removeChild(oldChild);
+    }
 }
