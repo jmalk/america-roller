@@ -140,6 +140,8 @@ document.body.addEventListener('click', function() {
     if (successfulChoice) {
       drawNumber(target.title.toString(), activeDie.number);
       deactivateDie("green");
+    } else {
+      notifyInvalidChoice();
     }
   } else if (activeDie !== null && target.className === "helper-area") {
     // activate helper
@@ -179,7 +181,7 @@ function drawNumber(state: string, newNumber: number) {
   newTextDiv.innerHTML = newNumber.toString();
   newTextDiv.style.position = "absolute";
 
-  let verticalPosition = Math.round(centroid.y) - 5;
+  let verticalPosition = Math.round(centroid.y) - 8;
   newTextDiv.style.top = verticalPosition.toString() + "px";
   
   let horizontalPosition = Math.round(centroid.x) - 5;
@@ -224,4 +226,8 @@ function get_polygon_centroid(pts) {
   }
   f = twicearea * 3;
   return { x:x/f, y:y/f };
+}
+
+function notifyInvalidChoice() {
+  console.log("INVALID");
 }
