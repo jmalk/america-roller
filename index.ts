@@ -66,6 +66,7 @@ class GameState {
   round = 1;
   turn = 0;
   diceRolls = generateGameDice();
+  devMode: boolean = true;
 
   isNewGame() {
     return this.round === 1 && this.turn === 0;
@@ -84,7 +85,8 @@ class GameState {
   }
 
   canRoll() {
-    return gameState.isNewGame() || (gameState.currentDice().left.assigned && gameState.currentDice().right.assigned)
+    return gameState.devMode || gameState.isNewGame() || 
+      (gameState.currentDice().left.assigned && gameState.currentDice().right.assigned);
   }
 
   newTurn() {
