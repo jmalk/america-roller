@@ -100,7 +100,7 @@ class GameState {
   }
 
   render() {
-    document.getElementById("game-over").innerHTML = "";
+    clearNotifications();
   
     if (this.isNewGame()) {
       document.getElementById("round-tracker").innerHTML = "ROUND: ";
@@ -115,7 +115,7 @@ class GameState {
     }
   
     if (this.isGameOver()) {
-      document.getElementById("game-over").innerHTML = "GAME OVER";
+      notify("GAME OVER");
     }
   }
 }
@@ -140,12 +140,12 @@ document.body.addEventListener('click', function() {
     }
   } else if (activeDie !== null && target.className === "state-area") {
     // assign die to state
-    let successfulChoice = submitStateValue(target.title.toString(), activeDie, true);
+    let successfulChoice = submitStateValue(target.title.toString(), activeDie);
     if (successfulChoice) {
       activeDie.drawOnMap(target.title);
       deactivateDie("green");
     } else {
-      notifyInvalidChoice();
+      notify("INVALID", 1000);
     }
   } else if (activeDie !== null && target.className === "helper-area") {
     // activate helper
@@ -176,6 +176,13 @@ export function reset() {
   gameState.render();
 }
 
-function notifyInvalidChoice() {
-  console.log("INVALID");
+function notify(message: string, displayTimeMs: number = 0) {
+  document.getElementById("notification-text").innerHTML = message;
+  if (displayTimeMs > 0) {
+    setTimeout(clearNotifications, displayTimeMs);
+  }
+}
+
+function clearNotifications() {
+  document.getElementById("notification-text").innerHTML = "";
 }

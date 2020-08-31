@@ -90,7 +90,7 @@ button {
     background-color: blue;
 }
 
-#game-over {
+#notification-text {
     color: red;
     font-size: 26pt;
 }
