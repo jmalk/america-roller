@@ -2,4 +2,4 @@ node_modules
 index.js
 dice.js
 rules.js
-utils.js
+annotation.js
