@@ -96,6 +96,7 @@ button {
 }
 
 #map {
+    position: relative;
     float: right;
     height: 573px;
     width: 800px;

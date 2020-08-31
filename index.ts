@@ -170,18 +170,24 @@ export function reset() {
 
 function drawNumber(state: string, newNumber: number) {
   // get options
-  let options = document.querySelectorAll('.state-area');
-  let allCoords = {};
-  for (var i = 0; i < options.length; i++) {
-    allCoords[options[i].title] = options[i].coords;
-  }
-  let stateCoords = allCoords[state];
-  console.log(stateCoords);
-  let centroid = getCentroid(stateCoords);
-  console.log("centroid: (" + centroid.x.toString() + "," + centroid.y.toString() + ")");
+  let allAreas = [].slice.call(document.querySelectorAll('.state-area'));
+  let targetArea = allAreas.find(a => a.title == state);
+
+  let centroid = getCentroid(targetArea.coords, targetArea.shape);
+
+  let newTextDiv = document.createElement("div");
+  newTextDiv.innerHTML = newNumber.toString();
+  newTextDiv.style.position = "absolute";
+
+  let verticalPosition = Math.round(centroid.y) - 5;
+  newTextDiv.style.top = verticalPosition.toString() + "px";
+  
+  let horizontalPosition = Math.round(centroid.x) - 5;
+  newTextDiv.style.left = horizontalPosition.toString() + "px";
+  document.getElementById("map").appendChild(newTextDiv);
 }
 
-function getCentroid(coords: string) {
+function getCentroid(coords: string, shapeType: string) {
   let parts = coords.split(",").map(x => Number.parseInt(x));
   let pts = [];
   for (var i = 0; i < parts.length; i++) {
@@ -192,7 +198,14 @@ function getCentroid(coords: string) {
       });
     }
   }
-  return get_polygon_centroid(pts);
+  if (shapeType == "rect") {
+    return {
+      x: (pts[0].x + pts[1].x)/2.0,
+      y: (pts[0].y + pts[1].y)/2.0,
+    }
+  } else {
+    return get_polygon_centroid(pts);
+  }
 }
 
 function get_polygon_centroid(pts) {
