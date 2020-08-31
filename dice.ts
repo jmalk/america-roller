@@ -1,3 +1,5 @@
+import {getCentroid} from "./utils.js"
+
 export type DiceColor =
   | "red"
   | "orange"
@@ -19,6 +21,7 @@ export class Dice {
     color: DiceColor;
     position: DicePosition;
     parentDiv: HTMLElement;
+    assigned: boolean = false;
 
     constructor(color: DiceColor, diceIndex: number) {
         this.number = rollDie();
@@ -26,6 +29,26 @@ export class Dice {
         this.position = diceIndex % 2 === 0 ? "left" : "right";
         let parentDivId = this.position === "left" ? "die1-div" : "die2-div";
         this.parentDiv = document.getElementById(parentDivId);
+    }    
+
+    drawOnMap(targetState: string) {
+      this.assigned = true;
+
+      let allAreas = [].slice.call(document.querySelectorAll('.state-area'));
+      let targetArea = allAreas.find(a => a.title == targetState);
+    
+      let centroid = getCentroid(targetArea.coords, targetArea.shape);
+    
+      let newTextDiv = document.createElement("div");
+      newTextDiv.innerHTML = this.number.toString();
+      newTextDiv.style.position = "absolute";
+    
+      let verticalPosition = Math.round(centroid.y) - 8;
+      newTextDiv.style.top = verticalPosition.toString() + "px";
+      
+      let horizontalPosition = Math.round(centroid.x) - 5;
+      newTextDiv.style.left = horizontalPosition.toString() + "px";
+      document.getElementById("map").appendChild(newTextDiv);
     }
 
     setBackground(targetColor: string = "#A3A3A3") {
