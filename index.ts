@@ -1,4 +1,5 @@
 import {Dice, DiceColor} from "./dice.js"
+import {validateNewValue, submitStateValue} from "./rules.js"
 
 const NUM_ROUNDS = 8;
 const NUM_TURNS = 3;
@@ -135,8 +136,11 @@ document.body.addEventListener('click', function() {
     }
   } else if (activeDie !== null && target.className === "state-area") {
     // assign die to state
-    chooseState(activeDie, target);
-    deactivateDie("green");
+    let successfulChoice = submitStateValue(target.title.toString(), activeDie.number, true);
+    if (successfulChoice) {
+      drawNumber(target.title.toString(), activeDie.number);
+      deactivateDie("green");
+    }
   } else if (activeDie !== null && target.className === "helper-area") {
     // activate helper
     console.log("Helper activated");
@@ -164,6 +168,47 @@ export function reset() {
   gameState.render();
 }
 
-function chooseState(activeDie: Dice, targetState: HTMLElement) {
-  console.log("Putting a " + activeDie.color.toString() + " " + activeDie.number.toString() + " in " + targetState.title.toString());
+function drawNumber(state: string, newNumber: number) {
+  // get options
+  let options = document.querySelectorAll('.state-area');
+  let allCoords = {};
+  for (var i = 0; i < options.length; i++) {
+    allCoords[options[i].title] = options[i].coords;
+  }
+  let stateCoords = allCoords[state];
+  console.log(stateCoords);
+  let centroid = getCentroid(stateCoords);
+  console.log("centroid: (" + centroid.x.toString() + "," + centroid.y.toString() + ")");
+}
+
+function getCentroid(coords: string) {
+  let parts = coords.split(",").map(x => Number.parseInt(x));
+  let pts = [];
+  for (var i = 0; i < parts.length; i++) {
+    if (i%2 == 0) {
+      pts.push({
+        x: parts[i],
+        y: parts[i+1]
+      });
+    }
+  }
+  return get_polygon_centroid(pts);
+}
+
+function get_polygon_centroid(pts) {
+  var first = pts[0], last = pts[pts.length-1];
+  if (first.x != last.x || first.y != last.y) pts.push(first);
+  var twicearea=0,
+  x=0, y=0,
+  nPts = pts.length,
+  p1, p2, f;
+  for ( var i=0, j=nPts-1 ; i<nPts ; j=i++ ) {
+     p1 = pts[i]; p2 = pts[j];
+     f = p1.x*p2.y - p2.x*p1.y;
+     twicearea += f;          
+     x += ( p1.x + p2.x ) * f;
+     y += ( p1.y + p2.y ) * f;
+  }
+  f = twicearea * 3;
+  return { x:x/f, y:y/f };
 }
