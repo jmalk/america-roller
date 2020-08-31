@@ -1,5 +1,6 @@
 import {Dice, DiceColor} from "./dice.js"
 import {validateNewValue, submitStateValue} from "./rules.js"
+import {strikeRound} from "./annotation.js"
 
 const NUM_ROUNDS = 8;
 const NUM_TURNS = 3;
@@ -94,6 +95,7 @@ class GameState {
 
     // Three turns per round
     if (this.turn === NUM_TURNS + 1) {
+      strikeRound(this.round);
       this.turn = 1;
       this.round += 1;
     }
@@ -173,6 +175,7 @@ export function roll() {
 export function reset() {
   gameState.currentDice().left.clear();
   gameState.currentDice().right.clear();
+  clearAnnotations();
 
   gameState = new GameState();
   gameState.render();
@@ -187,4 +190,13 @@ function notify(message: string, displayTimeMs: number = 0) {
 
 function clearNotifications() {
   document.getElementById("notification-text").innerHTML = "";
+}
+
+function clearAnnotations() {
+  let allChildren = Array.from(document.getElementById("map").children);
+  allChildren.forEach(function(child) {
+    if (child.className == "annotation") {
+      document.getElementById("map").removeChild(child);
+    }
+  });
 }

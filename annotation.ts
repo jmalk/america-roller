@@ -1,3 +1,22 @@
+export function strikeRound(roundNumber: number) {
+    let allAreas = [].slice.call(document.querySelectorAll('.round-area'));
+    let targetArea = allAreas.find(a => a.title == "round" + roundNumber.toString());
+    let centroid = getCentroid(targetArea.coords, targetArea.shape);
+
+    let newTextDiv = document.createElement("div");
+    newTextDiv.innerHTML = "X";
+    newTextDiv.className = "annotation";
+    newTextDiv.style.position = "absolute";
+    newTextDiv.style.fontSize = "24pt";
+
+    let verticalPosition = Math.round(centroid.y) - 20;
+    newTextDiv.style.top = verticalPosition.toString() + "px";
+    
+    let horizontalPosition = Math.round(centroid.x) - 13;
+    newTextDiv.style.left = horizontalPosition.toString() + "px";
+    document.getElementById("map").appendChild(newTextDiv);
+}
+
 export function annotateState(targetState: string, value: string) {
     let allAreas = [].slice.call(document.querySelectorAll('.state-area'));
     let targetArea = allAreas.find(a => a.title == targetState);
@@ -6,6 +25,7 @@ export function annotateState(targetState: string, value: string) {
 
     let newTextDiv = document.createElement("div");
     newTextDiv.innerHTML = value;
+    newTextDiv.className = "annotation";
     newTextDiv.style.position = "absolute";
 
     let verticalPosition = Math.round(centroid.y) - 8;
