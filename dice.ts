@@ -1,4 +1,4 @@
-import {getCentroid} from "./utils.js"
+import {annotateState} from "./annotation.js"
 
 export type DiceColor =
   | "red"
@@ -33,22 +33,7 @@ export class Dice {
 
     drawOnMap(targetState: string) {
       this.assigned = true;
-
-      let allAreas = [].slice.call(document.querySelectorAll('.state-area'));
-      let targetArea = allAreas.find(a => a.title == targetState);
-    
-      let centroid = getCentroid(targetArea.coords, targetArea.shape);
-    
-      let newTextDiv = document.createElement("div");
-      newTextDiv.innerHTML = this.number.toString();
-      newTextDiv.style.position = "absolute";
-    
-      let verticalPosition = Math.round(centroid.y) - 8;
-      newTextDiv.style.top = verticalPosition.toString() + "px";
-      
-      let horizontalPosition = Math.round(centroid.x) - 5;
-      newTextDiv.style.left = horizontalPosition.toString() + "px";
-      document.getElementById("map").appendChild(newTextDiv);
+      annotateState(targetState, this.number.toString());
     }
 
     setBackground(targetColor: string = "#A3A3A3") {
