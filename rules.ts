@@ -1,3 +1,5 @@
+import {Dice, DiceColor} from "./dice.js"
+
 const states = [
     "ak", "hi", "wa", "id", "or",
     "ca", "nv", "ut", "az", "mt",
@@ -10,6 +12,15 @@ const states = [
     "nj", "oh", "pa", "de", "wv",
     "md", "va", "nc", "sc", "ga"
 ];
+
+const stateColors = {
+    "orange": ["ak", "wa", "or", "id", "ca", "hi", "nv", "ut", "az"],
+    "blue": ["mt", "nd", "sd", "mn", "ia", "wi", "il", "mi", "in"],
+    "green": ["wy", "ne", "co", "ks", "nm", "ok", "tx"],
+    "yellow": ["mo", "ky", "tn", "ar", "la", "ms", "al", "fl"],
+    "purple": ["me", "vt", "nh", "ny", "ma", "ct", "ri", "nj"],
+    "red": ["oh", "pa", "de", "wv", "va", "md", "nc", "ga", "sc"]
+}
 
 const borders = {
     "ak": [],
@@ -71,12 +82,14 @@ for (var i = 0; i < states.length, i++) {
 
 let guarded = [];
 
-export function validateNewValue(state: string, newValue: number, debug: boolean = false) {
+export function validateNewValue(state: string, activeDie: Dice) {
     // check there's not already a number in this state
     if (values[state] > 0) {
-        if (debug) {
-            console.log("This state already contains a value");
-        }
+        return false;
+    }
+
+    // check the colors are compatible
+    if (activeDie.color != "colorless" && stateColors[activeDie.color].indexOf(state) == -1) {
         return false;
     }
 
@@ -88,26 +101,18 @@ export function validateNewValue(state: string, newValue: number, debug: boolean
     
     // check what existing values they have
     let nonZeroBorderValues = unguarded.map(state => values[state]).filter(value => value > 0);
-    
-    if (debug) {
-        console.log("validation function has received state = " + state + " and number " + newValue.toString());
-        console.log("borders: " + stateBorders.toString());
-        console.log("unguarded borders: " + unguarded.toString());
-        console.log("surrounding non-zero values: " + nonZeroBorderValues.toString());
-    }
 
     // and that they're all max 1 away from newValue
     let isValid = true;
     if (nonZeroBorderValues.length > 0) {
-        isValid = nonZeroBorderValues.every(val => Math.abs(newValue - val) <= 1);
+        isValid = nonZeroBorderValues.every(val => Math.abs(activeDie.number - val) <= 1);
     }
     return isValid;
 }
 
-export function submitStateValue(state: string, newValue: number, debug: boolean = false) {
-    if (validateNewValue(state, newValue, debug)) {
-        values[state] = newValue;
-        console.log("This is valid");
+export function submitStateValue(state: string, activeDie: Dice) {
+    if (validateNewValue(state, activeDie)) {
+        values[state] = activeDie.number;
         return true;
     } else {
         return false;

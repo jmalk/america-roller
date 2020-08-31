@@ -136,7 +136,7 @@ document.body.addEventListener('click', function() {
     }
   } else if (activeDie !== null && target.className === "state-area") {
     // assign die to state
-    let successfulChoice = submitStateValue(target.title.toString(), activeDie.number, true);
+    let successfulChoice = submitStateValue(target.title.toString(), activeDie, true);
     if (successfulChoice) {
       drawNumber(target.title.toString(), activeDie.number);
       deactivateDie("green");
