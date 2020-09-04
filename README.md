@@ -13,5 +13,4 @@ For development:
 #### TODO
 * place an x if no valid choice
 * guard, color dupe etc
-* grey out roll button unless you can roll
 * calculate total X's at end of game

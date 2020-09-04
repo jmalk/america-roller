@@ -63,11 +63,22 @@ function deactivateDie(targetColor="#A3A3A3") {
   activeDie = null;
 }
 
+function updateRollButton(canRoll: boolean) {
+  let canRollColor = "red";
+  let noRollColor = "rosybrown";
+  if (canRoll) {
+    document.getElementById("roll-button").style.backgroundColor = canRollColor;
+  } else {
+    document.getElementById("roll-button").style.backgroundColor = noRollColor;
+  }
+
+}
+
 class GameState {
   round = 1;
   turn = 0;
   diceRolls = generateGameDice();
-  devMode: boolean = true;
+  devMode: boolean = false;
 
   isNewGame() {
     return this.round === 1 && this.turn === 0;
@@ -148,6 +159,7 @@ document.body.addEventListener('click', function() {
     if (successfulChoice) {
       activeDie.drawOnMap(target.title);
       deactivateDie("green");
+      updateRollButton(gameState.canRoll());
     } else {
       notify("INVALID", 1000);
     }
@@ -170,6 +182,7 @@ export function roll() {
   if (gameState.canRoll()) {
     gameState.newTurn();
   }
+  updateRollButton(gameState.canRoll());
 }
 
 export function reset() {

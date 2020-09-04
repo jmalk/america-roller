@@ -1,14 +1,20 @@
+import { annotateState } from "./annotation.js";
 // TODO How to make number => DiceNumber in types?
 function rollDie(sides = 6) {
     return Math.ceil(Math.random() * sides);
 }
 export class Dice {
     constructor(color, diceIndex) {
+        this.assigned = false;
         this.number = rollDie();
         this.color = color;
         this.position = diceIndex % 2 === 0 ? "left" : "right";
         let parentDivId = this.position === "left" ? "die1-div" : "die2-div";
         this.parentDiv = document.getElementById(parentDivId);
+    }
+    drawOnMap(targetState) {
+        this.assigned = true;
+        annotateState(targetState, this.number.toString());
     }
     setBackground(targetColor = "#A3A3A3") {
         this.parentDiv.style.backgroundColor = targetColor;
