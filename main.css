@@ -90,6 +90,13 @@ button {
     background-color: blue;
 }
 
+#x-button {
+    background-color: white;
+    width: 80px;
+    color: black;
+    margin-left: 20px;
+}
+
 #notification-text {
     color: red;
     font-size: 26pt;
