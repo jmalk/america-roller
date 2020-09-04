@@ -17,6 +17,26 @@ export function strikeRound(roundNumber: number) {
     document.getElementById("map").appendChild(newTextDiv);
 }
 
+export function annotateXCount(newValue: string) {
+    clearAnnotations("xcount-annotation");
+
+    let allAreas = [].slice.call(document.querySelectorAll('.xcount-area'));
+    let targetArea = allAreas.find(a => a.title == "numXs");
+    let centroid = getCentroid(targetArea.coords, targetArea.shape);
+
+    let newTextDiv = document.createElement("div");
+    newTextDiv.innerHTML = newValue;
+    newTextDiv.className = "xcount-annotation";
+    newTextDiv.style.position = "absolute";
+
+    let verticalPosition = Math.round(centroid.y) - 8;
+    newTextDiv.style.top = verticalPosition.toString() + "px";
+    
+    let horizontalPosition = Math.round(centroid.x) - 5;
+    newTextDiv.style.left = horizontalPosition.toString() + "px";
+    document.getElementById("map").appendChild(newTextDiv);
+}
+
 export function annotateState(targetState: string, value: string) {
     let allAreas = [].slice.call(document.querySelectorAll('.state-area'));
     let targetArea = allAreas.find(a => a.title == targetState);
@@ -74,3 +94,12 @@ export function get_polygon_centroid(pts) {
     f = twicearea * 3;
     return { x:x/f, y:y/f };
 }
+
+export function clearAnnotations(annotationType: string = "annotation") {
+    let allChildren = Array.from(document.getElementById("map").children);
+    allChildren.forEach(function(child) {
+      if (child.className == annotationType) {
+        document.getElementById("map").removeChild(child);
+      }
+    });
+  }

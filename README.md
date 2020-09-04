@@ -11,6 +11,5 @@ For development:
 * tab 2: do `http-server -c-1` to launch a HTTP server of the project with caching disabled
 
 #### TODO
-* place an x if no valid choice
 * guard, color dupe etc
-* calculate total X's at end of game
+* enforce rules about where X's can be placed

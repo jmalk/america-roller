@@ -1,6 +1,6 @@
 import {Dice, DiceColor} from "./dice.js"
 import {validateNewValue, submitStateValue} from "./rules.js"
-import {strikeRound} from "./annotation.js"
+import {strikeRound, annotateState, clearAnnotations, annotateXCount} from "./annotation.js"
 
 const NUM_ROUNDS = 8;
 const NUM_TURNS = 3;
@@ -94,6 +94,11 @@ class GameState {
   xActive = false;
   numXUsed = 0;
 
+  incrementX() {
+    this.numXUsed += 1;
+    annotateXCount(this.numXUsed.toString());
+  }
+
   isNewGame() {
     return this.round === 1 && this.turn === 0;
   }
@@ -174,7 +179,7 @@ document.body.addEventListener('click', function() {
       activeDie.drawOnMap(target.title, gameState.xActive);
       deactivateDie("green");
       if (gameState.xActive) {
-        gameState.numXUsed += 1;
+        gameState.incrementX();
         deactivateX();
       }
       updateRollButton(gameState.canRoll());
@@ -235,11 +240,3 @@ function clearNotifications() {
   document.getElementById("notification-text").innerHTML = "";
 }
 
-function clearAnnotations() {
-  let allChildren = Array.from(document.getElementById("map").children);
-  allChildren.forEach(function(child) {
-    if (child.className == "annotation") {
-      document.getElementById("map").removeChild(child);
-    }
-  });
-}
