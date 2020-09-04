@@ -224,7 +224,7 @@ export function reset() {
 export function toggleXActive() {
   if (gameState.xActive) {
     deactivateX();
-  } else {
+  } else if (activeDie != null) {
     activateX();
   }
 }
