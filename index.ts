@@ -24,6 +24,8 @@ function generateRound(): Dice[] {
 
   let colorOrder = [];
 
+  let xActive = false;
+
   // Use `totalColors - 1` because one die is always left in the bag
   for (let i = 0; i < totalColors - 1; i++) {
     const random = randomIndex(allColors.length);
@@ -63,6 +65,16 @@ function deactivateDie(targetColor="#A3A3A3") {
   activeDie = null;
 }
 
+function activateX() {
+  gameState.xActive = true;
+  document.getElementById('x-button').style.borderColor = 'red';
+}
+
+function deactivateX() {
+  gameState.xActive = false;
+  document.getElementById('x-button').style.borderColor = 'white';
+}
+
 function updateRollButton(canRoll: boolean) {
   let canRollColor = "red";
   let noRollColor = "rosybrown";
@@ -79,6 +91,8 @@ class GameState {
   turn = 0;
   diceRolls = generateGameDice();
   devMode: boolean = false;
+  xActive = false;
+  numXUsed = 0;
 
   isNewGame() {
     return this.round === 1 && this.turn === 0;
@@ -157,8 +171,12 @@ document.body.addEventListener('click', function() {
     // assign die to state
     let successfulChoice = submitStateValue(target.title.toString(), activeDie);
     if (successfulChoice) {
-      activeDie.drawOnMap(target.title);
+      activeDie.drawOnMap(target.title, gameState.xActive);
       deactivateDie("green");
+      if (gameState.xActive) {
+        gameState.numXUsed += 1;
+        deactivateX();
+      }
       updateRollButton(gameState.canRoll());
     } else {
       notify("INVALID", 1000);
@@ -167,6 +185,9 @@ document.body.addEventListener('click', function() {
     // activate helper
     console.log("Helper activated");
     deactivateDie();
+  } else if (activeDie !== null && target.id == "x-button") {
+    // x should have been activated
+    console.log("X toggled");
   } else {
     deactivateDie();
   }
@@ -174,6 +195,7 @@ document.body.addEventListener('click', function() {
 
 document.getElementById('roll-button').addEventListener('click', function() {roll();});
 document.getElementById('reset-button').addEventListener('click', function() {reset();});
+document.getElementById('x-button').addEventListener('click', function() {toggleXActive();});
 
 export function roll() {
   if (gameState.isGameOver()) {
@@ -192,6 +214,14 @@ export function reset() {
 
   gameState = new GameState();
   gameState.render();
+}
+
+export function toggleXActive() {
+  if (gameState.xActive) {
+    deactivateX();
+  } else {
+    activateX();
+  }
 }
 
 function notify(message: string, displayTimeMs: number = 0) {

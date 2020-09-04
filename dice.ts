@@ -31,9 +31,13 @@ export class Dice {
         this.parentDiv = document.getElementById(parentDivId);
     }    
 
-    drawOnMap(targetState: string) {
+    drawOnMap(targetState: string, drawX: boolean) {
       this.assigned = true;
-      annotateState(targetState, this.number.toString());
+      if (drawX) {
+        annotateState(targetState, "X");
+      } else {
+        annotateState(targetState, this.number.toString());
+      }
     }
 
     setBackground(targetColor: string = "#A3A3A3") {
