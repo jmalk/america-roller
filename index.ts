@@ -1,5 +1,5 @@
 import {Dice, DiceColor} from "./dice.js"
-import {validateNewValue, submitStateValue} from "./rules.js"
+import {validateNewValue, submitStateValue, canPlaceDie} from "./rules.js"
 import {strikeRound, annotateState, clearAnnotations, annotateXCount} from "./annotation.js"
 import {GameState} from "./gameState.js"
 import {notify, clearNotifications} from "./notifications.js"
@@ -20,6 +20,9 @@ function activateDie(leftOrRight: string) {
 function deactivateDie(targetColor="#A3A3A3") {
   if (activeDie !== null) {
     activeDie.setBackground(targetColor);
+    if (gameState.xActive) {
+      deactivateX();
+    }
   }
   activeDie = null;
 }
@@ -52,6 +55,8 @@ function updateRollButton(canRoll: boolean) {
   }
 }
 
+// ----- the main game loop -----
+
 let gameState = new GameState(NUM_ROUNDS, NUM_TURNS);
 document.body.addEventListener('click', function() {
   var target = event.target as HTMLElement; 
@@ -72,8 +77,8 @@ document.body.addEventListener('click', function() {
     }
   } else if (activeDie !== null && target.className === "state-area") {
     // assign die to state
-    let successfulChoice = submitStateValue(target.title.toString(), activeDie);
-    if (successfulChoice) {
+    let validPlacement = submitStateValue(target.title.toString(), activeDie, gameState.xActive);
+    if (validPlacement) {
       activeDie.drawOnMap(target.title, gameState.xActive);
       deactivateDie("green");
       if (gameState.xActive) {
@@ -90,11 +95,13 @@ document.body.addEventListener('click', function() {
     deactivateDie();
   } else if (activeDie !== null && target.id == "x-button") {
     // x should have been activated
-    console.log("X toggled");
+    console.log("Either valid locations or X toggled");
   } else {
     deactivateDie();
   }
 }, true); 
+
+// ----- key button functionality -----
 
 export function roll() {
   if (gameState.isGameOver()) {
@@ -117,7 +124,16 @@ export function reset() {
 
 document.getElementById('roll-button').addEventListener('click', function() {roll();});
 document.getElementById('reset-button').addEventListener('click', function() {reset();});
-document.getElementById('x-button').addEventListener('click', function() {toggleXActive();});
+document.getElementById('x-button').addEventListener('click', function() {
+  if (activeDie == null) {
+    // there is a valid location for the die
+    notify("No die selected", 1000);
+  } else if (!gameState.xActive && canPlaceDie(activeDie)) {
+    notify("Valid locations exist", 1000);
+  } else {
+    toggleXActive();
+  }
+});
 
 
 

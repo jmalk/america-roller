@@ -84,7 +84,7 @@ let guarded = [];
 
 export function validateNewValue(state: string, activeDie: Dice) {
     // check there's not already a number in this state
-    if (values[state] > 0) {
+    if (values[state] !== 0) {
         return false;
     }
 
@@ -100,6 +100,7 @@ export function validateNewValue(state: string, activeDie: Dice) {
     let unguarded = stateBorders.filter(state => guarded.indexOf(state) == -1);
     
     // check what existing values they have
+    // this also filters out states with -1 meaning an X is there
     let nonZeroBorderValues = unguarded.map(state => values[state]).filter(value => value > 0);
 
     // and that they're all max 1 away from newValue
@@ -110,11 +111,23 @@ export function validateNewValue(state: string, activeDie: Dice) {
     return isValid;
 }
 
-export function submitStateValue(state: string, activeDie: Dice) {
-    if (validateNewValue(state, activeDie)) {
+export function submitStateValue(state: string, activeDie: Dice, placeX: boolean = false) {
+    if (placeX) {
+        values[state] = -1;
+        return true;
+    } else if (validateNewValue(state, activeDie)) {
         values[state] = activeDie.number;
         return true;
     } else {
         return false;
     }
+}
+
+export function canPlaceDie(activeDie: Dice) {
+    for (var i = 0; i < states.length; i++) {
+        if (validateNewValue(states[i], activeDie)) {
+            return true;
+        }
+    };
+    return false;
 }
