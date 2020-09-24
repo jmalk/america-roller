@@ -14,7 +14,7 @@ function activateDie(leftOrRight: string) {
     activeDie.setBackground();
   }
   activeDie = gameState.currentDice()[leftOrRight];
-  activeDie.setBackground("red");
+  activeDie.setBackground("#FF7216");
 }
 
 function deactivateDie(targetColor="#A3A3A3") {
