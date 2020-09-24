@@ -40,6 +40,7 @@ export class Dice {
       }
     }
 
+    // default colour is neutral grey
     setBackground(targetColor: string = "#A3A3A3") {
         this.parentDiv.style.backgroundColor = targetColor;
     }

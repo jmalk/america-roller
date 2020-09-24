@@ -17,6 +17,35 @@ export function strikeRound(roundNumber: number) {
     document.getElementById("map").appendChild(newTextDiv);
 }
 
+export function annotatePowerUp(powerupType: string, numUsed: number, confirmed: boolean) {
+    let targetTitle = powerupType + (numUsed+1).toString();
+    let targetAreaSelector = "." + powerupType + "-helper-area"
+
+    let allAreas = [].slice.call(document.querySelectorAll(targetAreaSelector));
+    let targetArea = allAreas.find(a => a.title == targetTitle);
+    let centroid = getCentroid(targetArea.coords, targetArea.shape);
+
+    let newTextDiv = document.createElement("div");
+    newTextDiv.innerHTML = "X";
+    newTextDiv.style.position = "absolute";
+    newTextDiv.style.fontSize = "18pt";
+    if (confirmed) {
+        newTextDiv.className = "confirmed-" + powerupType + "-powerup-annotation";
+        newTextDiv.style.color = "black";
+    } else {
+        newTextDiv.className = "potential-" + powerupType + "-powerup-annotation";
+        newTextDiv.style.color = "orange";
+    }
+
+    let verticalPosition = Math.round(centroid.y) - 20;
+    newTextDiv.style.top = verticalPosition.toString() + "px";
+    
+    let horizontalPosition = Math.round(centroid.x) - 13;
+    newTextDiv.style.left = horizontalPosition.toString() + "px";
+    document.getElementById("map").appendChild(newTextDiv);
+
+}
+
 export function annotateXCount(newValue: string) {
     clearAnnotations("xcount-annotation");
 
@@ -27,6 +56,7 @@ export function annotateXCount(newValue: string) {
     let newTextDiv = document.createElement("div");
     newTextDiv.innerHTML = newValue;
     newTextDiv.className = "xcount-annotation";
+    newTextDiv.style.fontSize = "48pt";
     newTextDiv.style.position = "absolute";
 
     let verticalPosition = Math.round(centroid.y) - 8;

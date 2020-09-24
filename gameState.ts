@@ -55,8 +55,18 @@ export class GameState {
     turn = 0;
     
     devMode: boolean = false;
+
     xActive = false;
     numXUsed = 0;
+
+    colorChangeActive = false;
+    colorChangesUsed = 0;
+
+    guardActive = false;
+    guardsUsed = 0;
+
+    dupeActive = false;
+    dupesUsed = 0;
 
     constructor(roundsPerGame, rollsPerRound) {
         this.roundsPerGame = roundsPerGame;

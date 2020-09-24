@@ -1,6 +1,6 @@
 import {Dice, DiceColor} from "./dice.js"
 import {validateNewValue, submitStateValue, canPlaceDie} from "./rules.js"
-import {strikeRound, annotateState, clearAnnotations, annotateXCount} from "./annotation.js"
+import {strikeRound, annotateState, annotatePowerUp, clearAnnotations, annotateXCount} from "./annotation.js"
 import {GameState} from "./gameState.js"
 import {notify, clearNotifications} from "./notifications.js"
 
@@ -44,6 +44,57 @@ export function toggleXActive() {
     activateX();
   }
 }
+
+function activatePowerUp(powerupClass: string) {
+  if (powerupClass.includes("color")) {
+    gameState.colorChangeActive = true;
+    annotatePowerUp("color", gameState.colorChangesUsed, false);
+    console.log("color change on");
+  } else if (powerupClass.includes("guard")) {
+    gameState.guardActive = true;
+    annotatePowerUp("guard", gameState.guardsUsed, false);
+    console.log("guard on");
+  } else if (powerupClass.includes("dupe")) {
+    gameState.dupeActive = true;
+    annotatePowerUp("dupe", gameState.dupesUsed, false);
+    console.log("dupe on");
+  }
+}
+
+function deactivatePowerUp(powerupClass: string) {
+  if (powerupClass.includes("color")) {
+    gameState.colorChangeActive = false;
+    console.log("color change off");
+  } else if (powerupClass.includes("guard")) {
+    gameState.guardActive = false;
+    console.log("guard off");
+  } else if (powerupClass.includes("dupe")) {
+    gameState.dupeActive = false;
+    console.log("dupe off");
+  }
+}
+
+function togglePowerUp(powerupClass: string) {
+  if (powerupClass.includes("color")) {
+    if (gameState.colorChangeActive) {
+      deactivatePowerUp(powerupClass);
+    } else {
+      activatePowerUp(powerupClass);
+    }
+  } else if (powerupClass.includes("guard")) {
+    if (gameState.guardActive) {
+      deactivatePowerUp(powerupClass);
+    } else {
+      activatePowerUp(powerupClass);
+    }
+  } else if (powerupClass.includes("dupe")) {
+    if (gameState.dupeActive) {
+      deactivatePowerUp(powerupClass);
+    } else {
+      activatePowerUp(powerupClass);
+    }
+  }
+};
 
 function updateRollButton(canRoll: boolean) {
   let canRollColor = "red";
@@ -89,10 +140,12 @@ document.body.addEventListener('click', function() {
     } else {
       notify("INVALID", 1000);
     }
-  } else if (activeDie !== null && target.className === "helper-area") {
-    // activate helper
-    console.log("Helper activated");
-    deactivateDie();
+  } else if (target.className.includes("helper-area")) {
+    if (activeDie == null) {
+      notify("No die selected", 1000);
+    } else {
+      togglePowerUp(target.className);
+    }
   } else if (activeDie !== null && target.id == "x-button") {
     // x should have been activated
     console.log("Either valid locations or X toggled");
