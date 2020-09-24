@@ -1,52 +1,11 @@
 import {Dice, DiceColor} from "./dice.js"
 import {validateNewValue, submitStateValue} from "./rules.js"
 import {strikeRound, annotateState, clearAnnotations, annotateXCount} from "./annotation.js"
+import {GameState} from "./gameState.js"
+import {notify, clearNotifications} from "./notifications.js"
 
 const NUM_ROUNDS = 8;
 const NUM_TURNS = 3;
-
-function randomIndex(arrayLength) {
-  return Math.floor(Math.random() * arrayLength);
-}
-
-function generateRound(): Dice[] {
-  let allColors: DiceColor[] = [
-    "red",
-    "orange",
-    "yellow",
-    "green",
-    "blue",
-    "purple",
-    "colorless",
-  ];
-
-  let totalColors = allColors.length;
-
-  let colorOrder = [];
-
-  let xActive = false;
-
-  // Use `totalColors - 1` because one die is always left in the bag
-  for (let i = 0; i < totalColors - 1; i++) {
-    const random = randomIndex(allColors.length);
-    const picked = allColors.splice(random, 1);
-    colorOrder = colorOrder.concat(picked);
-  }
-
-  const diceForRound = colorOrder.map((color, diceIndex) => {
-    return new Dice(color, diceIndex);
-  });
-
-  return diceForRound;
-}
-
-function generateGameDice() {
-  let dice = [];
-  for (var i = 0; i < NUM_ROUNDS; i++) {
-    dice.push(generateRound());
-  }
-  return dice;
-}
 
 let activeDie = null;
 
@@ -75,6 +34,14 @@ function deactivateX() {
   document.getElementById('x-button').style.borderColor = 'white';
 }
 
+export function toggleXActive() {
+  if (gameState.xActive) {
+    deactivateX();
+  } else if (activeDie != null) {
+    activateX();
+  }
+}
+
 function updateRollButton(canRoll: boolean) {
   let canRollColor = "red";
   let noRollColor = "rosybrown";
@@ -83,78 +50,9 @@ function updateRollButton(canRoll: boolean) {
   } else {
     document.getElementById("roll-button").style.backgroundColor = noRollColor;
   }
-
 }
 
-class GameState {
-  round = 1;
-  turn = 0;
-  diceRolls = generateGameDice();
-  devMode: boolean = false;
-  xActive = false;
-  numXUsed = 0;
-
-  incrementX() {
-    this.numXUsed += 1;
-    annotateXCount(this.numXUsed.toString());
-  }
-
-  isNewGame() {
-    return this.round === 1 && this.turn === 0;
-  }
-
-  isGameOver() {
-    return this.round === NUM_ROUNDS && this.turn === NUM_TURNS;
-  } 
-
-  currentDice() {
-    let roundDice = this.diceRolls[this.round - 1];
-    return {
-      "left": roundDice[this.turn*2 - 2],
-      "right": roundDice[this.turn*2 - 1]
-    };
-  }
-
-  canRoll() {
-    return gameState.devMode || gameState.isNewGame() || 
-      (gameState.currentDice().left.assigned && gameState.currentDice().right.assigned);
-  }
-
-  newTurn() {
-    this.turn += 1;
-
-    // Three turns per round
-    if (this.turn === NUM_TURNS + 1) {
-      strikeRound(this.round);
-      this.turn = 1;
-      this.round += 1;
-    }
-
-    this.render();
-  }
-
-  render() {
-    clearNotifications();
-  
-    if (this.isNewGame()) {
-      document.getElementById("round-tracker").innerHTML = "ROUND: ";
-      document.getElementById("roll-tracker").innerHTML = "ROLL: ";
-
-    } else {
-      document.getElementById("round-tracker").innerHTML = "ROUND: " + this.round.toString();
-      document.getElementById("roll-tracker").innerHTML = "ROLL: " + this.turn.toString();
-  
-      this.currentDice().left.render();
-      this.currentDice().right.render();
-    }
-  
-    if (this.isGameOver()) {
-      notify("GAME OVER");
-    }
-  }
-}
-
-let gameState = new GameState();
+let gameState = new GameState(NUM_ROUNDS, NUM_TURNS);
 document.body.addEventListener('click', function() {
   var target = event.target as HTMLElement; 
   if (activeDie === null && target.className === "die-image") {
@@ -198,10 +96,6 @@ document.body.addEventListener('click', function() {
   }
 }, true); 
 
-document.getElementById('roll-button').addEventListener('click', function() {roll();});
-document.getElementById('reset-button').addEventListener('click', function() {reset();});
-document.getElementById('x-button').addEventListener('click', function() {toggleXActive();});
-
 export function roll() {
   if (gameState.isGameOver()) {
     reset();
@@ -217,26 +111,15 @@ export function reset() {
   gameState.currentDice().right.clear();
   clearAnnotations();
 
-  gameState = new GameState();
+  gameState = new GameState(NUM_ROUNDS, NUM_TURNS);
   gameState.render();
 }
 
-export function toggleXActive() {
-  if (gameState.xActive) {
-    deactivateX();
-  } else if (activeDie != null) {
-    activateX();
-  }
-}
+document.getElementById('roll-button').addEventListener('click', function() {roll();});
+document.getElementById('reset-button').addEventListener('click', function() {reset();});
+document.getElementById('x-button').addEventListener('click', function() {toggleXActive();});
 
-function notify(message: string, displayTimeMs: number = 0) {
-  document.getElementById("notification-text").innerHTML = message;
-  if (displayTimeMs > 0) {
-    setTimeout(clearNotifications, displayTimeMs);
-  }
-}
 
-function clearNotifications() {
-  document.getElementById("notification-text").innerHTML = "";
-}
+
+
 

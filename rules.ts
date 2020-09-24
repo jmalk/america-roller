@@ -76,9 +76,9 @@ const borders = {
 }
 
 let values = {};
-for (var i = 0; i < states.length, i++) {
+for (var i = 0; i < states.length; i++) {
     values[states[i]] = 0;
-}
+};
 
 let guarded = [];
 

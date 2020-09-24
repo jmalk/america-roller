@@ -13,3 +13,5 @@ For development:
 #### TODO
 * guard, color dupe etc
 * enforce rules about where X's can be placed
+- placing an X means validity doesn't need to be checked, it can just be placed
+- an X can only be placed if there are currently no valid locations for the active die
