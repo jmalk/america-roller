@@ -145,7 +145,7 @@ document.body.addEventListener('click', function() {
     } else {
       notify("INVALID", 1000);
     }
-  } else if (target.className.includes("helper-area")) {
+  } else if (target.className.includes("helper-area") || target.className.includes("powerup-annotation")) {
     if (activeDie == null) {
       notify("No die selected", 1000);
     } else {
