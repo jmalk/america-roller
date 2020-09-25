@@ -111,7 +111,7 @@ document.body.addEventListener('click', function() {
     if (activeDie == null) {
       notify("No die selected", 1000);
     } else {
-      togglePowerUp(gameState, target.className);
+      togglePowerUp(gameState, target.className, activeDie.color);
     }
   } else if (activeDie !== null && target.id == "x-button") {
     // x should have been activated

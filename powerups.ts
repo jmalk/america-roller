@@ -1,5 +1,7 @@
 import {GameState} from "./gameState.js"
 import {annotatePowerUp, clearAnnotations} from "./annotation.js"
+import { DiceColor } from "./dice.js";
+import { notify } from "./notifications.js";
 
 export function activatePowerUp(gameState: GameState, powerupClass: string) {
     if (powerupClass.includes("color")) {
@@ -24,17 +26,22 @@ export function deactivatePowerUp(gameState: GameState, powerupClass: string) {
       clearAnnotations("potential-guard-powerup-annotation");
     } else if (powerupClass.includes("dupe")) {
       gameState.dupeActive = false;
+      gameState.dueDupe = false;
       clearAnnotations("potential-dupe-powerup-annotation");
     }
 };
 
-export function togglePowerUp(gameState: GameState, powerupClass: string) {
+export function togglePowerUp(gameState: GameState, powerupClass: string, diceColor: DiceColor) {
     if (powerupClass.includes("color")) {
-      if (gameState.colorChangeActive) {
-        deactivatePowerUp(gameState, powerupClass);
-      } else {
-        activatePowerUp(gameState, powerupClass);
-      }
+        if (diceColor == "colorless") {
+            notify("Cannot color-change colorless die", 1000);
+        } else {
+            if (gameState.colorChangeActive) {
+                deactivatePowerUp(gameState, powerupClass);
+            } else {
+                activatePowerUp(gameState, powerupClass);
+            }
+        }
     } else if (powerupClass.includes("guard")) {
       if (gameState.guardActive) {
         deactivatePowerUp(gameState, powerupClass);
