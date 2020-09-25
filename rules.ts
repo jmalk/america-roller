@@ -1,4 +1,5 @@
 import {Dice, DiceColor} from "./dice.js"
+import {annotateGuard} from "./annotation.js"
 
 const states = [
     "ak", "hi", "wa", "id", "or",
@@ -82,7 +83,7 @@ for (var i = 0; i < states.length; i++) {
 
 let guarded = [];
 
-export function validateNewValue(state: string, activeDie: Dice, colorChangeActive) {
+export function validateNewValue(state: string, activeDie: Dice, colorChangeActive: boolean, guardActive: boolean) {
     // check there's not already a number in this state
     if (values[state] !== 0) {
         return false;
@@ -105,18 +106,22 @@ export function validateNewValue(state: string, activeDie: Dice, colorChangeActi
 
     // and that they're all max 1 away from newValue
     let isValid = true;
-    if (nonZeroBorderValues.length > 0) {
+    if (!guardActive && nonZeroBorderValues.length > 0) {
         isValid = nonZeroBorderValues.every(val => Math.abs(activeDie.number - val) <= 1);
     }
     return isValid;
 }
 
-export function submitStateValue(state: string, activeDie: Dice, placeX: boolean = false, colorChangeActive: boolean = false) {
+export function submitStateValue(state: string, activeDie: Dice, placeX: boolean = false, 
+    colorChangeActive: boolean = false, guardActive: boolean = false) {
     if (placeX) {
         values[state] = -1;
         return true;
-    } else if (validateNewValue(state, activeDie, colorChangeActive)) {
+    } else if (validateNewValue(state, activeDie, colorChangeActive, guardActive)) {
         values[state] = activeDie.number;
+        if (guardActive) {
+            guarded.push(state);
+        }
         return true;
     } else {
         return false;
@@ -125,7 +130,7 @@ export function submitStateValue(state: string, activeDie: Dice, placeX: boolean
 
 export function canPlaceDie(activeDie: Dice) {
     for (var i = 0; i < states.length; i++) {
-        if (validateNewValue(states[i], activeDie)) {
+        if (validateNewValue(states[i], activeDie, false, false)) {
             return true;
         }
     };

@@ -69,7 +69,7 @@ export function annotateXCount(newValue: string) {
     document.getElementById("map").appendChild(newTextDiv);
 }
 
-export function annotateState(targetState: string, value: string) {
+export function annotateState(targetState: string, value: string, guarded: boolean = false) {
     let allAreas = [].slice.call(document.querySelectorAll('.state-area'));
     let targetArea = allAreas.find(a => a.title == targetState);
 
@@ -79,6 +79,9 @@ export function annotateState(targetState: string, value: string) {
     newTextDiv.innerHTML = value;
     newTextDiv.className = "annotation";
     newTextDiv.style.position = "absolute";
+    if (guarded) {
+        newTextDiv.style.color = "red";
+    }
 
     let verticalPosition = Math.round(centroid.y) - 8;
     newTextDiv.style.top = verticalPosition.toString() + "px";
@@ -135,39 +138,3 @@ export function clearAnnotations(annotationType: string = "annotation") {
       }
     });
   }
-
-export function revertPowerups(gameState: GameState) {
-    if (gameState.colorChangeActive) {
-        clearAnnotations("potential-color-powerup-annotation");
-        gameState.colorChangeActive = false;
-    }
-    if (gameState.guardActive) {
-        clearAnnotations("potential-guard-powerup-annotation");
-        gameState.guardActive = false;
-    }
-    if (gameState.dupeActive) {
-        clearAnnotations("potential-dupe-powerup-annotation");
-        gameState.dupeActive = false;
-    }
-}
-
-export function confirmPowerups(gameState: GameState) {
-    if (gameState.colorChangeActive) {
-        clearAnnotations("potential-color-powerup-annotation");
-        annotatePowerUp("color", gameState.colorChangesUsed, true);
-        gameState.colorChangesUsed += 1;
-        gameState.colorChangeActive = false;
-    }
-    if (gameState.guardActive) {
-        clearAnnotations("potential-guard-powerup-annotation");
-        annotatePowerUp("guard", gameState.guardsUsed, true);
-        gameState.guardsUsed += 1;
-        gameState.guardActive = false;
-    }
-    if (gameState.dupeActive) {
-        clearAnnotations("potential-dupe-powerup-annotation");
-        annotatePowerUp("dupe", gameState.dupesUsed, true);
-        gameState.dupesUsed += 1;
-        gameState.dupeActive = false;
-    }
-}

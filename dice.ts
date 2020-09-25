@@ -31,12 +31,12 @@ export class Dice {
         this.parentDiv = document.getElementById(parentDivId);
     }    
 
-    drawOnMap(targetState: string, drawX: boolean) {
+    drawOnMap(targetState: string, drawX: boolean, guarded: boolean = false) {
       this.assigned = true;
       if (drawX) {
-        annotateState(targetState, "X");
+        annotateState(targetState, "X", false);
       } else {
-        annotateState(targetState, this.number.toString());
+        annotateState(targetState, this.number.toString(), guarded);
       }
     }
 

@@ -1,6 +1,6 @@
 import {Dice, DiceColor} from "./dice.js"
 import {validateNewValue, submitStateValue, canPlaceDie} from "./rules.js"
-import {strikeRound, annotateState, annotatePowerUp, clearAnnotations, annotateXCount} from "./annotation.js"
+import {strikeRound, annotatePowerUp, clearAnnotations, annotateXCount} from "./annotation.js"
 import {GameState} from "./gameState.js"
 import {notify, clearNotifications} from "./notifications.js"
 import {togglePowerUp, confirmPowerups, revertPowerups} from "./powerups.js"
@@ -79,9 +79,15 @@ document.body.addEventListener('click', function() {
     }
   } else if (activeDie !== null && target.className === "state-area") {
     // assign die to state
-    let validPlacement = submitStateValue(target.title.toString(), activeDie, gameState.xActive, gameState.colorChangeActive);
+    let validPlacement = submitStateValue(
+      target.title.toString(),
+      activeDie,
+      gameState.xActive,
+      gameState.colorChangeActive,
+      gameState.guardActive
+    );
     if (validPlacement) {
-      activeDie.drawOnMap(target.title, gameState.xActive);
+      activeDie.drawOnMap(target.title, gameState.xActive, gameState.guardActive);
       confirmPowerups(gameState);
       deactivateDie("green");
       if (gameState.xActive) {
