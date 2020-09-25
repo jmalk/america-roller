@@ -1,9 +1,9 @@
-import {Dice, DiceColor} from "./dice.js"
-import {validateNewValue, submitStateValue, canPlaceDie} from "./rules.js"
-import {strikeRound, annotatePowerUp, clearAnnotations, annotateXCount} from "./annotation.js"
-import {GameState} from "./gameState.js"
-import {notify, clearNotifications} from "./notifications.js"
-import {togglePowerUp, confirmPowerups, revertPowerups} from "./powerups.js"
+import {Dice} from "./modules/dice.js"
+import {submitStateValue, canPlaceDie} from "./modules/rules.js"
+import {clearAnnotations, annotateXCount} from "./modules/annotation.js"
+import {GameState} from "./modules/gameState.js"
+import {notify} from "./modules/notifications.js"
+import {togglePowerUp, confirmPowerups, revertPowerups} from "./modules/powerups.js"
 
 const NUM_ROUNDS = 8;
 const NUM_TURNS = 3;

@@ -1,5 +1,4 @@
-import {Dice, DiceColor} from "./dice.js"
-import {annotateGuard} from "./annotation.js"
+import {Dice} from "./dice.js"
 
 const states = [
     "ak", "hi", "wa", "id", "or",

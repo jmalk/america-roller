@@ -1,6 +1,3 @@
-import {GameState} from "./gameState.js"
-import { clearNotifications } from "./notifications.js";
-
 export function strikeRound(roundNumber: number) {
     let allAreas = [].slice.call(document.querySelectorAll('.round-area'));
     let targetArea = allAreas.find(a => a.title == "round" + roundNumber.toString());
