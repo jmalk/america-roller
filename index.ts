@@ -1,6 +1,6 @@
 import {Dice, DiceColor} from "./dice.js"
 import {validateNewValue, submitStateValue, canPlaceDie} from "./rules.js"
-import {strikeRound, annotateState, annotatePowerUp, clearAnnotations, annotateXCount} from "./annotation.js"
+import {strikeRound, annotateState, annotatePowerUp, clearAnnotations, annotateXCount, confirmPowerups, revertPowerups} from "./annotation.js"
 import {GameState} from "./gameState.js"
 import {notify, clearNotifications} from "./notifications.js"
 
@@ -23,6 +23,7 @@ function deactivateDie(targetColor="#A3A3A3") {
     if (gameState.xActive) {
       deactivateX();
     }
+    revertPowerups(gameState);
   }
   activeDie = null;
 }
@@ -64,12 +65,15 @@ function activatePowerUp(powerupClass: string) {
 function deactivatePowerUp(powerupClass: string) {
   if (powerupClass.includes("color")) {
     gameState.colorChangeActive = false;
+    clearAnnotations("potential-color-powerup-annotation");
     console.log("color change off");
   } else if (powerupClass.includes("guard")) {
     gameState.guardActive = false;
+    clearAnnotations("potential-guard-powerup-annotation");
     console.log("guard off");
   } else if (powerupClass.includes("dupe")) {
     gameState.dupeActive = false;
+    clearAnnotations("potential-dupe-powerup-annotation");
     console.log("dupe off");
   }
 }
@@ -131,6 +135,7 @@ document.body.addEventListener('click', function() {
     let validPlacement = submitStateValue(target.title.toString(), activeDie, gameState.xActive);
     if (validPlacement) {
       activeDie.drawOnMap(target.title, gameState.xActive);
+      confirmPowerups(gameState);
       deactivateDie("green");
       if (gameState.xActive) {
         gameState.incrementX();

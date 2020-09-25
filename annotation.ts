@@ -1,3 +1,6 @@
+import {GameState} from "./gameState.js"
+import { clearNotifications } from "./notifications.js";
+
 export function strikeRound(roundNumber: number) {
     let allAreas = [].slice.call(document.querySelectorAll('.round-area'));
     let targetArea = allAreas.find(a => a.title == "round" + roundNumber.toString());
@@ -43,7 +46,6 @@ export function annotatePowerUp(powerupType: string, numUsed: number, confirmed:
     let horizontalPosition = Math.round(centroid.x) - 13;
     newTextDiv.style.left = horizontalPosition.toString() + "px";
     document.getElementById("map").appendChild(newTextDiv);
-
 }
 
 export function annotateXCount(newValue: string) {
@@ -133,3 +135,39 @@ export function clearAnnotations(annotationType: string = "annotation") {
       }
     });
   }
+
+export function revertPowerups(gameState: GameState) {
+    if (gameState.colorChangeActive) {
+        clearAnnotations("potential-color-powerup-annotation");
+        gameState.colorChangeActive = false;
+    }
+    if (gameState.guardActive) {
+        clearAnnotations("potential-guard-powerup-annotation");
+        gameState.guardActive = false;
+    }
+    if (gameState.dupeActive) {
+        clearAnnotations("potential-dupe-powerup-annotation");
+        gameState.dupeActive = false;
+    }
+}
+
+export function confirmPowerups(gameState: GameState) {
+    if (gameState.colorChangeActive) {
+        clearAnnotations("potential-color-powerup-annotation");
+        annotatePowerUp("color", gameState.colorChangesUsed, true);
+        gameState.colorChangesUsed += 1;
+        gameState.colorChangeActive = false;
+    }
+    if (gameState.guardActive) {
+        clearAnnotations("potential-guard-powerup-annotation");
+        annotatePowerUp("guard", gameState.guardsUsed, true);
+        gameState.guardsUsed += 1;
+        gameState.guardActive = false;
+    }
+    if (gameState.dupeActive) {
+        clearAnnotations("potential-dupe-powerup-annotation");
+        annotatePowerUp("dupe", gameState.dupesUsed, true);
+        gameState.dupesUsed += 1;
+        gameState.dupeActive = false;
+    }
+}
