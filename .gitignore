@@ -3,3 +3,6 @@ index.js
 dice.js
 rules.js
 annotation.js
+powerups.ts
+gameState.ts
+notifications.ts
