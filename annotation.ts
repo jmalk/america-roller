@@ -37,13 +37,13 @@ export function annotatePowerUp(powerupType: string, numUsed: number, confirmed:
         newTextDiv.style.color = "black";
     } else {
         newTextDiv.className = "potential-" + powerupType + "-powerup-annotation";
-        newTextDiv.style.color = "orange";
+        newTextDiv.style.color = "#D1D1D1";
     }
 
-    let verticalPosition = Math.round(centroid.y) - 20;
+    let verticalPosition = Math.round(centroid.y) - 17;
     newTextDiv.style.top = verticalPosition.toString() + "px";
     
-    let horizontalPosition = Math.round(centroid.x) - 13;
+    let horizontalPosition = Math.round(centroid.x) - 10;
     newTextDiv.style.left = horizontalPosition.toString() + "px";
     document.getElementById("map").appendChild(newTextDiv);
 }
