@@ -82,14 +82,14 @@ for (var i = 0; i < states.length; i++) {
 
 let guarded = [];
 
-export function validateNewValue(state: string, activeDie: Dice) {
+export function validateNewValue(state: string, activeDie: Dice, colorChangeActive) {
     // check there's not already a number in this state
     if (values[state] !== 0) {
         return false;
     }
 
     // check the colors are compatible
-    if (activeDie.color != "colorless" && stateColors[activeDie.color].indexOf(state) == -1) {
+    if (!colorChangeActive && (activeDie.color != "colorless" && stateColors[activeDie.color].indexOf(state) == -1)) {
         return false;
     }
 
@@ -111,11 +111,11 @@ export function validateNewValue(state: string, activeDie: Dice) {
     return isValid;
 }
 
-export function submitStateValue(state: string, activeDie: Dice, placeX: boolean = false) {
+export function submitStateValue(state: string, activeDie: Dice, placeX: boolean = false, colorChangeActive: boolean = false) {
     if (placeX) {
         values[state] = -1;
         return true;
-    } else if (validateNewValue(state, activeDie)) {
+    } else if (validateNewValue(state, activeDie, colorChangeActive)) {
         values[state] = activeDie.number;
         return true;
     } else {

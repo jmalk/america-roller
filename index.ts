@@ -79,7 +79,7 @@ document.body.addEventListener('click', function() {
     }
   } else if (activeDie !== null && target.className === "state-area") {
     // assign die to state
-    let validPlacement = submitStateValue(target.title.toString(), activeDie, gameState.xActive);
+    let validPlacement = submitStateValue(target.title.toString(), activeDie, gameState.xActive, gameState.colorChangeActive);
     if (validPlacement) {
       activeDie.drawOnMap(target.title, gameState.xActive);
       confirmPowerups(gameState);
