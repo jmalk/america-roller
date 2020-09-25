@@ -59,6 +59,34 @@ function updateRollButton(canRoll: boolean) {
 
 // ----- the main game loop -----
 
+function tryAssignDie(activeDie: Dice, stateName: string, dupeToCome: boolean = false) {
+  // assign die to state
+  let validPlacement = submitStateValue(
+    stateName,
+    activeDie,
+    gameState.xActive,
+    gameState.colorChangeActive,
+    gameState.guardActive
+  );
+  if (validPlacement) {
+    activeDie.drawOnMap(stateName, gameState.xActive, gameState.guardActive);
+    if (gameState.xActive) {
+      gameState.incrementX();
+      deactivateX();
+    }
+
+    if (!dupeToCome) {
+      confirmPowerups(gameState);
+      deactivateDie("green");
+      updateRollButton(gameState.canRoll());
+    } else {
+      gameState.dueDupe = false;
+    }
+  } else {
+    notify("INVALID", 1000);
+  }
+}
+
 let gameState = new GameState(NUM_ROUNDS, NUM_TURNS);
 document.body.addEventListener('click', function() {
   var target = event.target as HTMLElement; 
@@ -78,26 +106,7 @@ document.body.addEventListener('click', function() {
       activateDie(targetLeftOrRight);
     }
   } else if (activeDie !== null && target.className === "state-area") {
-    // assign die to state
-    let validPlacement = submitStateValue(
-      target.title.toString(),
-      activeDie,
-      gameState.xActive,
-      gameState.colorChangeActive,
-      gameState.guardActive
-    );
-    if (validPlacement) {
-      activeDie.drawOnMap(target.title, gameState.xActive, gameState.guardActive);
-      confirmPowerups(gameState);
-      deactivateDie("green");
-      if (gameState.xActive) {
-        gameState.incrementX();
-        deactivateX();
-      }
-      updateRollButton(gameState.canRoll());
-    } else {
-      notify("INVALID", 1000);
-    }
+    tryAssignDie(activeDie, target.title, gameState.dueDupe);
   } else if (target.className.includes("helper-area") || target.className.includes("powerup-annotation")) {
     if (activeDie == null) {
       notify("No die selected", 1000);

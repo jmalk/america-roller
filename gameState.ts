@@ -67,6 +67,7 @@ export class GameState {
 
     dupeActive = false;
     dupesUsed = 0;
+    dueDupe = false;
 
     constructor(roundsPerGame, rollsPerRound) {
         this.roundsPerGame = roundsPerGame;

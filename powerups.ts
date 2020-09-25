@@ -10,6 +10,7 @@ export function activatePowerUp(gameState: GameState, powerupClass: string) {
       annotatePowerUp("guard", gameState.guardsUsed, false);
     } else if (powerupClass.includes("dupe")) {
       gameState.dupeActive = true;
+      gameState.dueDupe = true;
       annotatePowerUp("dupe", gameState.dupesUsed, false);
     }
 };
