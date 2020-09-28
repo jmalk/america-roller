@@ -1,148 +1,161 @@
+import {Dice} from "./modules/dice.js"
+import {submitStateValue, canPlaceDie} from "./modules/rules.js"
+import {clearAnnotations, annotateXCount} from "./modules/annotation.js"
+import {GameState} from "./modules/gameState.js"
+import {notify} from "./modules/notifications.js"
+import {togglePowerUp, confirmPowerups, revertPowerups} from "./modules/powerups.js"
+
 const NUM_ROUNDS = 8;
 const NUM_TURNS = 3;
 
-type DiceColor =
-  | "red"
-  | "orange"
-  | "yellow"
-  | "green"
-  | "blue"
-  | "purple"
-  | "colorless";
+let activeDie = null;
 
-type Dice = { number: number; color: DiceColor };
-
-// TODO How to make number => DiceNumber in types?
-function rollDie(sides = 6): number {
-  return Math.ceil(Math.random() * sides);
-}
-
-function randomIndex(arrayLength) {
-  return Math.floor(Math.random() * arrayLength);
-}
-
-function generateRound(): Dice[] {
-  let allColors: DiceColor[] = [
-    "red",
-    "orange",
-    "yellow",
-    "green",
-    "blue",
-    "purple",
-    "colorless",
-  ];
-
-  let totalColors = allColors.length;
-
-  let colorOrder = [];
-
-  // Use `totalColors - 1` because one die is always left in the bag
-  for (let i = 0; i < totalColors - 1; i++) {
-    const random = randomIndex(allColors.length);
-    const picked = allColors.splice(random, 1);
-    colorOrder = colorOrder.concat(picked);
+function activateDie(leftOrRight: string) {
+  if (activeDie !== null) {
+    activeDie.setBackground();
   }
-
-  const diceForRound = colorOrder.map((color) => {
-    return {
-      color,
-      number: rollDie(),
-    };
-  });
-
-  return diceForRound;
+  activeDie = gameState.currentDice()[leftOrRight];
+  activeDie.setBackground("#FF7216");
 }
 
-function generateGameDice() {
-  let dice = [];
-  for (var i = 0; i < NUM_ROUNDS; i++) {
-    dice.push(generateRound());
+function deactivateDie(targetColor="#A3A3A3") {
+  if (activeDie !== null) {
+    activeDie.setBackground(targetColor);
+    if (gameState.xActive) {
+      deactivateX();
+    }
+    revertPowerups(gameState);
   }
-  return dice;
+  activeDie = null;
 }
 
-function clearDie(parentDivId) {
-  let parent = document.getElementById(parentDivId);
-  let oldChild = parent.childNodes[0];
-  parent.removeChild(oldChild);
+function activateX() {
+  gameState.xActive = true;
+  document.getElementById('x-button').style.borderColor = 'red';
 }
 
-function showDie(parentDivId, die: Dice) {
-  let dieImg = document.createElement("img");
-  dieImg.className = "die-image";
-  dieImg.src =
-    "assets/dice/" + die.color + "-" + die.number.toString() + ".png";
-  let parentDiv = document.getElementById(parentDivId);
-  if (parentDiv.hasChildNodes()) {
-    parentDiv.replaceChild(dieImg, parentDiv.firstChild);
+function deactivateX() {
+  gameState.xActive = false;
+  document.getElementById('x-button').style.borderColor = 'white';
+}
+
+export function toggleXActive() {
+  if (gameState.xActive) {
+    deactivateX();
+  } else if (activeDie != null) {
+    activateX();
+  }
+}
+
+function updateRollButton(canRoll: boolean) {
+  let canRollColor = "red";
+  let noRollColor = "rosybrown";
+  if (canRoll) {
+    document.getElementById("roll-button").style.backgroundColor = canRollColor;
   } else {
-    parentDiv.appendChild(dieImg);
+    document.getElementById("roll-button").style.backgroundColor = noRollColor;
   }
 }
 
-class GameState {
-  round = 1;
-  turn = 0;
-  diceRolls = generateGameDice();
+// ----- the main game loop -----
 
-  isNewGame() {
-    return this.round === 1 && this.turn === 0;
-  }
-
-  isGameOver() {
-    return this.round === NUM_ROUNDS && this.turn === NUM_TURNS;
-  } 
-
-  currentDice() {
-    let roundDice = this.diceRolls[this.round - 1];
-    return roundDice.slice(this.turn*2 - 2, this.turn*2);
-  }
-
-  newTurn() {
-    this.turn += 1;
-
-    // Three turns per round
-    if (this.turn === NUM_TURNS + 1) {
-      this.turn = 1;
-      this.round += 1;
+function tryAssignDie(activeDie: Dice, stateName: string, dupeToCome: boolean = false) {
+  // assign die to state
+  let validPlacement = submitStateValue(
+    stateName,
+    activeDie,
+    gameState.xActive,
+    gameState.colorChangeActive,
+    gameState.guardActive
+  );
+  if (validPlacement) {
+    activeDie.drawOnMap(stateName, gameState.xActive, gameState.guardActive);
+    if (gameState.xActive) {
+      gameState.incrementX();
+      deactivateX();
     }
 
-    this.render();
-  }
-
-  render() {
-    document.getElementById("game-over").innerHTML = "";
-  
-    if (this.isNewGame()) {
-      document.getElementById("round-tracker-value").innerHTML = "";
-      document.getElementById("roll-tracker-value").innerHTML = "";
-  
-      clearDie("die1-div");
-      clearDie("die2-div");
+    if (!dupeToCome) {
+      confirmPowerups(gameState);
+      deactivateDie("green");
+      updateRollButton(gameState.canRoll());
     } else {
-      document.getElementById("round-tracker-value").innerHTML = this.round.toString();
-      document.getElementById("roll-tracker-value").innerHTML = this.turn.toString();
-  
-      showDie("die1-div", this.currentDice()[0]);
-      showDie("die2-div", this.currentDice()[1]);
+      gameState.dueDupe = false;
     }
-  
-    if (this.isGameOver()) {
-      document.getElementById("game-over").innerHTML = "GAME OVER";
-    }
+  } else {
+    notify("INVALID", 1000);
   }
 }
 
-let gameState = new GameState();
+let gameState = new GameState(NUM_ROUNDS, NUM_TURNS);
+document.body.addEventListener('click', function() {
+  var target = event.target as HTMLElement; 
+  if (activeDie === null && target.className === "die-image") {
+    // no currently active die so activate one just selected
+    var leftOrRight = target.id === "die-left" ? "left" : "right";
+    activateDie(leftOrRight);
+  } else if (activeDie !== null && target.className === "die-image") {
+    // there is a currently active die but a die has been clicked
+    var targetLeftOrRight = target.id === "die-left" ? "left" : "right";
+    if (targetLeftOrRight === activeDie.position) {
+      // if it's the same one that's currently active then deactivate it
+      deactivateDie();
+    } else {
+      // if it's the other one then switch which die is active
+      deactivateDie();
+      activateDie(targetLeftOrRight);
+    }
+  } else if (activeDie !== null && target.className === "state-area") {
+    tryAssignDie(activeDie, target.title, gameState.dueDupe);
+  } else if (target.className.includes("helper-area") || target.className.includes("powerup-annotation")) {
+    if (activeDie == null) {
+      notify("No die selected", 1000);
+    } else {
+      togglePowerUp(gameState, target.className, activeDie.color);
+    }
+  } else if (activeDie !== null && target.id == "x-button") {
+    // x should have been activated
+    console.log("Either valid locations or X toggled");
+  } else {
+    deactivateDie();
+  }
+}, true); 
 
-function roll() {
+// ----- key button functionality -----
+
+export function roll() {
   if (gameState.isGameOver()) {
     reset();
   }
-  gameState.newTurn();
+  if (gameState.canRoll()) {
+    gameState.newTurn();
+  }
+  updateRollButton(gameState.canRoll());
 }
 
-function reset() {
-  gameState = new GameState();
+export function reset() {
+  gameState.currentDice().left.clear();
+  gameState.currentDice().right.clear();
+  clearAnnotations();
+
+  gameState = new GameState(NUM_ROUNDS, NUM_TURNS);
   gameState.render();
 }
+
+document.getElementById('roll-button').addEventListener('click', function() {roll();});
+document.getElementById('reset-button').addEventListener('click', function() {reset();});
+document.getElementById('x-button').addEventListener('click', function() {
+  if (activeDie == null) {
+    // there is a valid location for the die
+    notify("No die selected", 1000);
+  } else if (!gameState.xActive && canPlaceDie(activeDie)) {
+    notify("Valid locations exist", 1000);
+  } else {
+    toggleXActive();
+  }
+});
+
+
+
+
+

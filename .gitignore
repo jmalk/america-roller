@@ -1,2 +1,9 @@
 node_modules
 index.js
+
+modules/dice.js
+modules/rules.js
+modules/annotation.js
+modules/powerups.js
+modules/gameState.js
+modules/notifications.js

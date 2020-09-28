@@ -3,28 +3,111 @@
   <link rel="stylesheet" href="main.css">
 </head>
 <body>
-  <script src="index.js"></script>
+  <script src="index.js" type="module"></script>
   <center>
-    <div><h1>AmericaRoller</h2></div>
+    <p id="title-text">AmericaRoller</p>
 
     <div id="main-wrapper">
-      <div id="round-tracker-div" class="tracker-div">
-        <p class="tracker-type">ROUND</p>
-        <p id="round-tracker-value" class="tracker-value"></p>
+      <div id="left-panel">
+        <div id="trackers">
+          <div id="round-tracker-div" class="tracker-div">
+            <p class="tracker" id="round-tracker">ROUND: </p>
+          </div>
+  
+          <div id="round-tracker-div" class="tracker-div">
+            <p class="tracker" id="roll-tracker">ROLL: </p>
+          </div>
+    
+          <div id="dice">
+            <div id="die1-div" class="die-div"></div>
+            <div id="die2-div" class="die-div"></div>
+          </div>
+        </div>
+  
+        <div id="buttons">
+          <button id="roll-button">ROLL</button>
+          <button id="reset-button">RESET</button>
+          <button id="x-button">X</button>
+        </div>
+
+
+        <p id="notification-text"></p>
       </div>
 
-      <div id="die1-div" class="die-div"></div>
-      <div id="die2-div" class="die-div"></div>
-
-      <div id="round-tracker-div" class="tracker-div">
-        <p class="tracker-type">ROLL</p>
-        <p id="roll-tracker-value" class="tracker-value"></p>
+      <div id="map">
+        <img id="map-img" src="assets/ra_map.jpg" usemap="#image-map">
+        <map name="image-map">
+            <area class="state-area" title="ak" coords="27,66,84,124" shape="rect">
+            <area class="state-area" alt="hi" title="hi" coords="27,381,84,413" shape="rect">
+            <area class="state-area" alt="wa" title="wa" coords="95,134,161,185" shape="rect">
+            <area class="state-area" alt="or" title="or" coords="95,187,161,241" shape="rect">
+            <area class="state-area" alt="id" title="id" coords="163,134,188,133,188,209,216,209,216,242,163,242" shape="poly">
+            <area class="state-area" alt="mt" title="mt" coords="193,136,296,205" shape="rect">
+            <area class="state-area" alt="ca" title="ca" coords="95,243,131,244,131,331,164,330,164,369,96,369" shape="poly">
+            <area class="state-area" alt="nv" title="nv" coords="132,243,182,327" shape="rect">
+            <area class="state-area" alt="az" title="az" coords="167,330,234,401" shape="rect">
+            <area class="state-area" alt="ut" title="ut" coords="184,244,214,244,215,274,234,274,233,327,185,327" shape="poly">
+            <area class="state-area" alt="wy" title="wy" coords="219,208,296,268" shape="rect">
+            <area class="state-area" alt="nd" title="nd" coords="299,136,373,187" shape="rect">
+            <area class="state-area" alt="sd" title="sd" coords="299,190,373,238" shape="rect">
+            <area class="state-area" alt="mn" title="mn" coords="376,136,420,205" shape="rect">
+            <area class="state-area" alt="co" title="co" coords="239,273,307,326" shape="rect">
+            <area class="state-area" alt="nm" title="nm" coords="239,331,295,400" shape="rect">
+            <area class="state-area" alt="ne" title="ne" coords="299,243,372,243,372,283,313,284,311,268,299,267" shape="poly">
+            <area class="state-area" alt="ok" title="ok" coords="300,331,373,331,373,387,328,387,327,349,300,349" shape="poly">
+            <area class="state-area" alt="tx" title="tx" coords="301,352,323,352,325,390,387,391,387,463,355,462,355,487,312,488,311,431,273,431,271,403,301,403" shape="poly">
+            <area class="state-area" alt="ks" title="ks" coords="311,288,373,326" shape="rect">
+            <area class="state-area" alt="wi" title="wi" coords="423,148,462,215" shape="rect">
+            <area class="state-area" alt="ia" title="ia" coords="376,208,420,265" shape="rect">
+            <area class="state-area" alt="mo" title="mo" coords="378,270,420,343" shape="rect">
+            <area class="state-area" alt="ar" title="ar" coords="379,345,419,345,419,397,394,397,394,384,379,384" shape="poly">
+            <area class="state-area" alt="la" title="la" coords="393,401,419,401,419,431,445,431,446,464,394,465" shape="poly">
+            <area class="state-area" alt="il" title="il" coords="424,219,462,299" shape="rect">
+            <area class="state-area" alt="mi" title="mi" coords="464,148,521,148,519,215,489,215,489,176,465,176" shape="poly">
+            <area class="state-area" alt="ms" title="ms" coords="423,357,464,358,464,443,449,443,448,427,423,427" shape="poly">
+            <area class="state-area" alt="in" title="in" coords="465,219,502,271" shape="rect">
+            <area class="state-area" alt="ky" title="ky" coords="466,276,519,276,519,329,423,329,423,303,465,303" shape="poly">
+            <area class="state-area" alt="tn" title="tn" coords="422,331,542,355" shape="rect">
+            <area class="state-area" alt="al" title="al" coords="467,357,513,358,514,418,483,418,484,442,467,442,467,422,467,404" shape="poly">
+            <area class="state-area" alt="fl" title="fl" coords="487,420,575,421,575,502,544,503,543,445,487,444" shape="poly">
+            <area class="state-area" alt="ga" title="ga" coords="516,357,571,418" shape="rect">
+            <area class="state-area" alt="sc" title="sc" coords="575,359,612,395" shape="rect">
+            <area class="state-area" alt="nc" title="nc" coords="544,331,637,355" shape="rect">
+            <area class="state-area" alt="va" title="va" coords="582,275,608,275,608,303,636,303,636,329,522,327,522,303,581,303" shape="poly">
+            <area class="state-area" alt="ny" title="ny" coords="617,134,656,133,656,216,571,215,573,175,616,176" shape="poly">
+            <area class="state-area" alt="oh" title="oh" coords="507,219,550,272" shape="rect">
+            <area class="state-area" alt="wv" title="wv" coords="522,274,580,301" shape="rect">
+            <area class="state-area" alt="pa" title="pa" coords="554,217,635,271" shape="rect">
+            <area class="state-area" alt="me" title="me" coords="716,78,770,132" shape="rect">
+            <area class="state-area" alt="nh" title="nh" coords="688,104,714,159" shape="rect">
+            <area class="state-area" alt="vt" title="vt" coords="659,105,686,160" shape="rect">
+            <area class="state-area" alt="ma" title="ma" coords="660,163,742,188" shape="rect">
+            <area class="state-area" alt="ri" title="ri" coords="708,191,743,215" shape="rect">
+            <area class="state-area" alt="ct" title="ct" coords="659,191,705,215" shape="rect">
+            <area class="state-area" alt="nj" title="nj" coords="637,218,691,243" shape="rect">
+            <area class="state-area" alt="de" title="de" coords="637,245,694,271" shape="rect">
+            <area class="state-area" alt="md" title="md" coords="611,274,665,301" shape="rect">
+            <area class="round-area" alt="round1" title="round1" coords="256,70,290,105" shape="rect">
+            <area class="round-area" alt="round2" title="round2" coords="291,71,325,106" shape="rect">
+            <area class="round-area" alt="round3" title="round3" coords="329,72,361,104" shape="rect">
+            <area class="round-area" alt="round4" title="round4" coords="364,71,398,106" shape="rect">
+            <area class="round-area" alt="round5" title="round5" coords="401,71,435,104" shape="rect">
+            <area class="round-area" alt="round6" title="round6" coords="438,71,470,105" shape="rect">
+            <area class="round-area" alt="round7" title="round7" coords="473,71,507,107" shape="rect">
+            <area class="round-area" alt="round8" title="round8" coords="508,71,545,106" shape="rect">
+            <area class="xcount-area" alt="numXs" title="numXs" coords="643,449,751,541" shape="rect">
+            <area class="color-helper-area" alt="color1" title="color1" coords="95,454,120,480" shape="rect">
+            <area class="color-helper-area" alt="color2" title="color2" coords="123,454,147,480" shape="rect">
+            <area class="color-helper-area" alt="color3" title="color3" coords="152,453,176,481" shape="rect">
+            <area class="guard-helper-area" alt="guard1" title="guard1" coords="36,516,63,542" shape="rect">
+            <area class="guard-helper-area" alt="guard2" title="guard2" coords="63,516,90,541" shape="rect">
+            <area class="guard-helper-area" alt="guard3" title="guard3" coords="93,515,118,542" shape="rect">
+            <area class="dupe-helper-area" alt="dupe1" title="dupe1" coords="151,515,179,542" shape="rect">
+            <area class="dupe-helper-area" alt="dupe2" title="dupe2" coords="180,515,207,541" shape="rect">
+            <area class="dupe-helper-area" alt="dupe3" title="dupe3" coords="208,517,233,541" shape="rect">
+        </map>
       </div>
     </div>
 
-    <button id="roll-button" onclick="roll()">ROLL</button><br>
-    <button id="reset-button" onclick="reset()">RESET</button>
-    
-    <p id="game-over"></p>
   </center>
 </body>
